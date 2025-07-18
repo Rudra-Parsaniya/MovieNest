@@ -1,0 +1,35 @@
+# Node.js
+node_modules/
+dist/
+.bolt/
+# Dependency lock files (optional, if you want to ignore them globally)
+# package-lock.json
+# pnpm-lock.yaml
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio
+.vs/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Excel and other data files
+*.xlsx
+
+# Ignore local environment config
+*.env
+
+# Ignore logs
+*.log
+
+# Ignore database files
+*.mdf
+*.ldf 
