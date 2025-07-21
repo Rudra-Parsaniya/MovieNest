@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Star, Clock, Calendar, Heart, Bookmark, Play } from 'lucide-react';
+import { X, Star, Clock, Calendar, Heart, Bookmark } from 'lucide-react';
 import { Movie } from '../types/movie';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -95,11 +95,6 @@ export const MovieModal: React.FC<MovieModalProps> = ({
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-medium flex items-center space-x-2 transition-colors">
-                      <Play className="w-5 h-5" />
-                      <span>Play</span>
-                    </button>
-
                     {isAuthenticated && (
                       <>
                         <button

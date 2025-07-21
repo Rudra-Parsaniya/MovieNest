@@ -22,7 +22,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="bg-gray-950 border-b border-gray-800 px-6 py-4">
+    <header className="bg-gray-950 border-b border-gray-800 px-6 py-4 sticky top-0 z-50">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white">{title}</h2>

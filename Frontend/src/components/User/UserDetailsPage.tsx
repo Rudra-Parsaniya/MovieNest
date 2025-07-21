@@ -13,7 +13,7 @@ const UserDetailsPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cover bg-center" style={{ backgroundImage: 'url(https://c4.wallpaperflare.com/wallpaper/862/449/162/jack-reacher-star-wars-interstellar-movie-john-wick-wallpaper-thumb.jpg)' }}>
+    <div className="h-screen flex items-center justify-center overflow-hidden">
       <div className="max-w-lg w-full mx-auto bg-gray-900/90 p-6 rounded-xl border border-gray-800 text-white space-y-4 backdrop-blur-sm">
         <h2 className="text-2xl font-bold mb-4">User Details</h2>
         <div className="space-y-2">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Layout/Sidebar';
 import { Header } from './components/Layout/Header';
 import { HomePage } from './components/Home/HomePage';
@@ -15,7 +15,14 @@ import { Movie, RecommendedMovie } from './types/movie';
 import { apiService } from './services/api';
 
 function AppContent() {
-  const [currentView, setCurrentView] = useState('home');
+  // On load, get last view from localStorage
+  const [currentView, setCurrentView] = useState(() => localStorage.getItem('currentView') || 'home');
+
+  // Whenever currentView changes, save to localStorage
+  useEffect(() => {
+    localStorage.setItem('currentView', currentView);
+  }, [currentView]);
+
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showAddMovieModal, setShowAddMovieModal] = useState(false);
@@ -99,6 +106,16 @@ function AppContent() {
     } catch (error) {
       console.error('Failed to delete movie:', error);
     }
+  };
+
+  // Place these handlers above renderContent so they are in scope
+  const handleRemoveFromFavorites = async (movieId: number) => {
+    await removeFromFavorites(movieId);
+    refetch();
+  };
+  const handleRemoveFromWatchlist = async (movieId: number) => {
+    await removeFromWatchlist(movieId);
+    refetch();
   };
 
   const getRecommendedMoviesData = (): Movie[] => {
@@ -200,7 +217,6 @@ function AppContent() {
             favoriteMovieIds={getFavoriteMovieIds()}
             onMovieClick={handleMovieClick}
             onEditMovie={handleEditMovie}
-            onDeleteMovie={handleDeleteMovie}
             isLoading={isLoading}
           />
         );
@@ -217,7 +233,8 @@ function AppContent() {
             favoriteMovieIds={getFavoriteMovieIds()}
             onMovieClick={handleMovieClick}
             onEditMovie={handleEditMovie}
-            onDeleteMovie={handleDeleteMovie}
+            onDeleteMovie={handleRemoveFromFavorites}
+            showActions={false}
           />
         );
       case 'watchlist':
@@ -233,7 +250,8 @@ function AppContent() {
             favoriteMovieIds={getFavoriteMovieIds()}
             onMovieClick={handleMovieClick}
             onEditMovie={handleEditMovie}
-            onDeleteMovie={handleDeleteMovie}
+            onDeleteMovie={handleRemoveFromWatchlist}
+            showActions={false}
           />
         );
       case 'user':
@@ -259,7 +277,16 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex">
+    <div 
+      className={`min-h-screen flex bg-gray-950`}
+      style={currentView === 'user' ? {
+        backgroundImage: `url('/MAX1.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed'
+      } : {}}
+    >
       <Sidebar
         currentView={currentView}
         onViewChange={setCurrentView}
