@@ -278,14 +278,7 @@ function AppContent() {
 
   return (
     <div 
-      className={`min-h-screen flex bg-gray-950`}
-      style={currentView === 'user' ? {
-        backgroundImage: `url('/MAX1.jpg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed'
-      } : {}}
+      className="min-h-screen flex bg-black text-slate-100"
     >
       <Sidebar
         currentView={currentView}

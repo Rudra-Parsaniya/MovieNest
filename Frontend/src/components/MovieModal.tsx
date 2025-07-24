@@ -112,8 +112,8 @@ export const MovieModal: React.FC<MovieModalProps> = ({
                           onClick={handleFavoritesClick}
                           className={`p-3 rounded-lg border-2 transition-colors ${
                             isInFavorites
-                              ? 'bg-red-600 border-red-600 text-white'
-                              : 'border-gray-600 text-gray-300 hover:border-red-600 hover:text-red-400'
+                              ? 'bg-red-600 border-red-100 text-white'
+                              : 'border-gray-600 text-gray-300 hover:border-red-100 hover:text-red-400'
                           }`}
                           title={isInFavorites ? 'Remove from Favorites' : 'Add to Favorites'}
                         >

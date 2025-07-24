@@ -22,10 +22,10 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="bg-gray-950 border-b border-gray-800 px-6 py-4 sticky top-0 z-50">
+    <header className="bg-black px-6 py-4 sticky top-0 z-50 shadow-lg">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-white">{title}</h2>
+          <h2 className="text-2xl font-bold text-white drop-shadow">{title}</h2>
         </div>
 
         <div className="flex items-center space-x-4">
@@ -38,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onShowAuth();
               }
             }}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow"
           >
             {isAuthenticated ? 'Logout' : 'Sign In'}
           </button>

@@ -87,7 +87,7 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-900 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-black rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-white">
@@ -119,7 +119,7 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
                   value={formData.movieTitle}
                   onChange={handleInputChange}
                   required
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                  className="w-full bg-gray-900 text-white px-4 py-3 rounded-lg border border-gray-800 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                   placeholder="Enter movie title"
                 />
               </div>
@@ -133,7 +133,7 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
                   value={formData.movieGenre}
                   onChange={handleInputChange}
                   required
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                  className="w-full bg-gray-900 text-white px-4 py-3 rounded-lg border border-gray-800 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                 >
                   <option value="">Select a genre</option>
                   {genres.map(genre => (
@@ -154,7 +154,7 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
                   required
                   min="1900"
                   max={new Date().getFullYear() + 5}
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                  className="w-full bg-gray-900 text-white px-4 py-3 rounded-lg border border-gray-800 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                 />
               </div>
 
@@ -170,7 +170,7 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
                   required
                   min="1"
                   max="600"
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                  className="w-full bg-gray-900 text-white px-4 py-3 rounded-lg border border-gray-800 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                 />
               </div>
 
@@ -187,7 +187,7 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
                   min="0"
                   max="10"
                   step="0.1"
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                  className="w-full bg-gray-900 text-white px-4 py-3 rounded-lg border border-gray-800 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                 />
               </div>
 
@@ -200,7 +200,7 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
                   name="imgUrl"
                   value={formData.imgUrl}
                   onChange={handleInputChange}
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                  className="w-full bg-gray-900 text-white px-4 py-3 rounded-lg border border-gray-800 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                   placeholder="https://example.com/image.jpg"
                 />
               </div>
@@ -216,7 +216,7 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
                 onChange={handleInputChange}
                 required
                 rows={4}
-                className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                className="w-full bg-gray-900 text-white px-4 py-3 rounded-lg border border-gray-800 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                 placeholder="Enter movie description"
               />
             </div>

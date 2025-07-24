@@ -39,7 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <div className="w-64 bg-gray-900 border-r border-gray-800 flex flex-col h-screen sticky top-0">
+    <div className="w-64 bg-black border-r border-gray-900 flex flex-col h-screen sticky top-0">
       {/* Logo */}
       <div className="p-6 border-b border-gray-800">
         <div className="flex items-center space-x-3">
@@ -55,22 +55,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               key={item.id}
               onClick={() => onViewChange(item.id)}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-left transition-colors ${
-                currentView === item.id
-                  ? 'bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 text-white'
-                  : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-              }`}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-left font-medium transition-all duration-200
+                ${currentView === item.id
+                  ? 'bg-blue-900/60 text-white shadow-lg border-l-4 border-blue-700 backdrop-blur-lg bg-clip-padding border border-blue-700/30'
+                  : 'text-gray-300 hover:bg-gray-900 hover:text-white'}
+              `}
             >
               <div className="flex items-center space-x-3">
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
+                <span>{item.label}</span>
               </div>
               {item.count !== undefined && (
-                <span className={`px-2 py-1 text-xs rounded-full ${
-                  currentView === item.id
-                    ? 'bg-white/20 text-white'
-                    : 'bg-gray-700 text-gray-300'
-                }`}>
+                <span className={`px-2 py-1 text-xs rounded-full font-bold
+                  ${currentView === item.id
+                    ? 'bg-blue-700/80 text-white'
+                    : 'bg-gray-800 text-gray-300'}
+                `}>
                   {item.count}
                 </span>
               )}
@@ -80,10 +80,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* User Section */}
-      <div className="p-4 border-t border-gray-800">
+      <div className="p-4">
         {isAuthenticated && user ? (
           <div className="space-y-3">
-            <div className="flex items-center space-x-3 px-4 py-3 bg-gray-800 rounded-lg">
+            <div className="flex items-center space-x-3 px-4 py-3 bg-gray-800/60 rounded-lg backdrop-blur-lg bg-clip-padding border border-gray-700/30">
               <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
@@ -92,7 +92,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <p className="text-gray-400 text-sm truncate">@{user.username}</p>
               </div>
             </div>
-            
             <div className="space-y-1">
               <button
                 onClick={onShowProfile}

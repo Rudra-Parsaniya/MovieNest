@@ -28,7 +28,6 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   showActions = true,
   onDelete,
 }) => {
-  // const { isAuthenticated } = useAuth();
   const [addedToWatchlist, setAddedToWatchlist] = useState(false);
   const [addedToFavorites, setAddedToFavorites] = useState(false);
 
@@ -54,9 +53,17 @@ export const MovieCard: React.FC<MovieCardProps> = ({
     }
   };
 
+  // Color badge for genre
+  const genreColor =
+    movie.movieGenre.toLowerCase().includes('action') ? 'bg-blue-600' :
+    movie.movieGenre.toLowerCase().includes('comedy') ? 'bg-yellow-600' :
+    movie.movieGenre.toLowerCase().includes('drama') ? 'bg-purple-600' :
+    movie.movieGenre.toLowerCase().includes('sci') ? 'bg-green-600' :
+    'bg-gray-700';
+
   return (
     <div
-      className="group relative bg-gray-900 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer"
+      className="group relative bg-black border border-gray-800 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer hover:drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]"
       onClick={() => onClick?.(movie)}
     >
       {/* Movie Poster */}
@@ -71,7 +78,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           }}
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-gray-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
         {/* Delete Button (Favorites section only) */}
         {onDelete && (
           <button
@@ -79,7 +86,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
               e.stopPropagation();
               onDelete(movie.movieId);
             }}
-            className="absolute top-2 right-2 flex items-center justify-center w-9 h-9 rounded-full bg-red-600 hover:bg-red-700 text-white shadow z-20 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400"
+            className="absolute top-2 right-2 flex items-center justify-center w-9 h-9 rounded-full bg-red-600 hover:bg-red-700 text-white shadow z-20 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
             title="Remove from Favorites"
           >
             <Trash2 className="w-5 h-5" />
@@ -115,13 +122,13 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           </div>
         )}
         {/* Rating Badge */}
-        <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center space-x-1 z-10">
-          <Star className="w-3 h-3 text-yellow-400 fill-current" />
+        <div className="absolute top-2 left-2 bg-white/20 backdrop-blur-md rounded-lg px-2 py-1 flex items-center space-x-1 z-10 shadow-md border border-white/30">
+          <Star className="w-3 h-3 text-yellow-300 fill-current" />
           <span className="text-white text-xs font-medium">{movie.rating}</span>
         </div>
       </div>
       {/* Movie Info */}
-      <div className="p-4">
+      <div className="p-4 bg-black/10">
         <h3 className="text-white font-semibold text-lg mb-2 line-clamp-2 group-hover:text-red-400 transition-colors">
           {movie.movieTitle}
         </h3>
@@ -134,7 +141,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <span className="bg-gray-800 text-gray-300 px-2 py-1 rounded text-xs">
+          <span className="bg-gray-800/60 backdrop-blur-md text-gray-200 px-2 py-1 rounded text-xs font-semibold shadow border border-white/10">
             {movie.movieGenre}
           </span>
         </div>

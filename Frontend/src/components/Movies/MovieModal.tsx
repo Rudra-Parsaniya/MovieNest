@@ -48,7 +48,7 @@ export const MovieModal: React.FC<MovieModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-900 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-black rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="relative">
           <button
             onClick={onClose}
@@ -68,7 +68,7 @@ export const MovieModal: React.FC<MovieModalProps> = ({
                 target.src = 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg';
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-gray-900/70 to-transparent" />
             
             {/* Movie Info Overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-8">
@@ -89,7 +89,7 @@ export const MovieModal: React.FC<MovieModalProps> = ({
                       <Clock className="w-5 h-5" />
                       <span>{movie.duration} min</span>
                     </div>
-                    <span className="bg-gray-700 px-3 py-1 rounded-full text-sm">
+                    <span className="bg-gray-800/80 px-3 py-1 rounded-full text-sm">
                       {movie.movieGenre}
                     </span>
                   </div>
