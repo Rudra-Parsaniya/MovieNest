@@ -23,6 +23,14 @@ export interface User {
   age: number;
   email: string;
   createdAt: string;
+  // Backend might use PascalCase versions
+  UserId?: number;
+  Username?: string;
+  PasswordHash?: string;
+  FullName?: string;
+  Age?: number;
+  Email?: string;
+  CreatedAt?: string;
 }
 
 export interface WatchlistItem {
@@ -57,4 +65,13 @@ export interface RegisterRequest {
   fullName: string;
   age: number;
   email: string;
+}
+
+export interface UpdateUserRequest {
+  UserId: number;
+  Username: string;
+  FullName: string;
+  Email: string;
+  Age: number;
+  PasswordHash: string;
 }

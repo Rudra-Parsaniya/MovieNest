@@ -77,6 +77,23 @@ function AppContent() {
     }
   };
 
+  const handleAdvancedSearch = async (title?: string, genre?: string, year?: number) => {
+    if (!title && !genre && year === undefined) {
+      setIsSearching(false);
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const results = await searchMovies(title, genre, year);
+      setSearchResults(results);
+    } catch (error) {
+      console.error('Advanced search failed:', error);
+      setSearchResults([]);
+    }
+  };
+
   const handleMovieClick = (movie: Movie) => {
     setSelectedMovie(movie);
   };
@@ -120,7 +137,7 @@ function AppContent() {
 
   const getRecommendedMoviesData = (): Movie[] => {
     return recommendedMovies
-      .map((rec: any) => {
+      .map((rec: RecommendedMovie) => {
         const src = rec.movie ?? rec.Movie;
         if (!src) return undefined;
         return {
@@ -208,7 +225,7 @@ function AppContent() {
         return (
           <MovieGrid
             movies={getRecommendedMoviesData()}
-            title="Recommended Movies"
+            // title="Recommended Movies"
             onAddToWatchlist={addToWatchlist}
             onAddToFavorites={addToFavorites}
             onRemoveFromWatchlist={removeFromWatchlist}
@@ -224,7 +241,7 @@ function AppContent() {
         return (
           <MovieGrid
             movies={getFavoriteMovies()}
-            title="My Favorites"
+            // title="My Favorites"
             onAddToWatchlist={addToWatchlist}
             onAddToFavorites={addToFavorites}
             onRemoveFromWatchlist={removeFromWatchlist}
@@ -241,7 +258,7 @@ function AppContent() {
         return (
           <MovieGrid
             movies={getWatchlistMovies()}
-            title="My Watchlist"
+            // title="My Watchlist"
             onAddToWatchlist={addToWatchlist}
             onAddToFavorites={addToFavorites}
             onRemoveFromWatchlist={removeFromWatchlist}
@@ -293,10 +310,11 @@ function AppContent() {
         <Header
           title={getPageTitle()}
           onSearch={handleSearch}
+          onAdvancedSearch={handleAdvancedSearch}
           onShowAuth={() => setShowAuthModal(true)}
         />
 
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto">
           {renderContent()}
         </main>
       </div>

@@ -8,16 +8,19 @@ interface ProfileModalProps {
 }
 
 export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, testConnectivity } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [connectivityStatus, setConnectivityStatus] = useState('');
   
   const [formData, setFormData] = useState({
     username: '',
     fullName: '',
     email: '',
     age: '',
+    password: '', // Add password field
   });
 
   useEffect(() => {
@@ -27,6 +30,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
         fullName: user.fullName,
         email: user.email,
         age: user.age.toString(),
+        password: '', // Reset password field
       });
     }
   }, [user]);
@@ -35,17 +39,43 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setSuccess('');
 
     try {
-      await updateUser({
-        username: formData.username,
-        fullName: formData.fullName,
-        email: formData.email,
-        age: parseInt(formData.age),
-      });
+      console.log('ProfileModal: Form data before update:', formData);
+      
+      // Validate form data
+      if (!formData.username.trim() || !formData.fullName.trim() || !formData.email.trim()) {
+        throw new Error('Please fill in all required fields');
+      }
+      
+      const age = parseInt(formData.age);
+      if (isNaN(age) || age < 1 || age > 150) {
+        throw new Error('Please enter a valid age between 1 and 150');
+      }
+      
+      const updatePayload: any = {
+        username: formData.username.trim(),
+        fullName: formData.fullName.trim(),
+        email: formData.email.trim(),
+        age: age,
+      };
+      
+      // Only include password if it's not empty
+      if (formData.password.trim()) {
+        updatePayload.password = formData.password;
+      }
+      
+      console.log('ProfileModal: Sending update payload:', updatePayload);
+      await updateUser(updatePayload);
+      console.log('ProfileModal: Update successful');
+      setSuccess('Profile updated successfully!');
       setIsEditing(false);
-    } catch (err) {
-      setError('Failed to update profile. Please try again.');
+      // Clear password field after successful update
+      setFormData(prev => ({ ...prev, password: '' }));
+    } catch (err: any) {
+      console.error('ProfileModal: Update failed:', err);
+      setError(err.message || 'Failed to update profile. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -58,11 +88,25 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
     });
   };
 
+  const handleTestConnectivity = async () => {
+    try {
+      setConnectivityStatus('Testing connection...');
+      const isConnected = await testConnectivity();
+      if (isConnected) {
+        setConnectivityStatus('✅ API connection successful!');
+      } else {
+        setConnectivityStatus('❌ API connection failed!');
+      }
+    } catch (error) {
+      setConnectivityStatus('❌ Connection test error!');
+    }
+  };
+
   if (!isOpen || !user) return null;
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-900 rounded-2xl w-full max-w-md p-8 relative">
+      <div className="bg-gray rounded-2xl w-full max-w-md p-8 relative">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
@@ -83,6 +127,11 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
             {error && (
               <div className="bg-red-600/20 border border-red-600 text-red-400 px-4 py-3 rounded-lg text-sm">
                 {error}
+              </div>
+            )}
+            {success && (
+              <div className="bg-green-600/20 border border-green-600 text-green-400 px-4 py-3 rounded-lg text-sm">
+                {success}
               </div>
             )}
 
@@ -125,6 +174,21 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 onChange={handleInputChange}
                 required
                 className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Password (leave blank to keep current)
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                autoComplete="new-password"
+                placeholder="New password"
               />
             </div>
 
@@ -214,6 +278,20 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               <Edit2 className="w-4 h-4" />
               <span>Edit Profile</span>
             </button>
+            
+            {/* Connectivity Test */}
+            <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-300 mb-2">API Connection Test</h3>
+              {connectivityStatus && (
+                <p className="text-xs text-gray-400 mb-2">{connectivityStatus}</p>
+              )}
+              <button
+                onClick={handleTestConnectivity}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-sm transition-colors"
+              >
+                Test API Connection
+              </button>
+            </div>
           </div>
         )}
       </div>

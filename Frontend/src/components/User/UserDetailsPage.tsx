@@ -27,8 +27,8 @@ const UserDetailsPage: React.FC = () => {
         alt="Background"
         className="absolute inset-0 w-full h-full object-cover z-0"
       />
-      <div className="absolute inset-0 bg-black/70 z-10" />
-      <div className="max-w-lg w-full mx-auto bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/20 text-slate-100 space-y-4 shadow-xl relative z-20">
+      <div className="absolute inset-0 bg-black/40 z-10" />
+      <div className="max-w-lg w-full mx-auto bg-white/5 backdrop-blur-md p-6  rounded-xl border border-white/20 text-slate-100 space-y-4 shadow-xl relative z-20 transform -translate-y-20">
         <h2 className="text-2xl font-bold mb-4">User Details</h2>
         <div className="space-y-2">
           <p><span className="text-gray-400">Username:</span> {user.username}</p>
