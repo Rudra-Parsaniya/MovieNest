@@ -1,12 +1,11 @@
 // API Configuration
-// Use HTTPS explicitly to match backend
-const API_BASE_URL = `https://localhost:7159/api`;
+// Use proxy for development to avoid CORS issues
+const API_BASE_URL = `/api`;
 
-import { UpdateUserRequest } from '../types/movie';
+import { UpdateUserRequest, AdminMovieData, AdminUserData } from '../types/movie';
 
 const request = async (endpoint: string, options: RequestInit = {}) => {
     const url = `${API_BASE_URL}/${endpoint}`;
-    console.log('Making API request to:', url, 'with options:', options);
     
     try {
         const response = await fetch(url, {
@@ -17,18 +16,25 @@ const request = async (endpoint: string, options: RequestInit = {}) => {
             ...options,
         });
 
-        console.log('API response status:', response.status, 'for endpoint:', endpoint);
-
         if (!response.ok) {
-            const error = await response.text();
-            console.error('API error response:', error, 'for endpoint:', endpoint);
+            let errorMessage = 'Something went wrong';
+            try {
+                const errorText = await response.text();
+                if (errorText) {
+                    errorMessage = errorText;
+                }
+            } catch (e) {
+                console.error('Could not read error response:', e);
+            }
+            
+            console.error('API error response:', errorMessage, 'for endpoint:', endpoint);
             console.error('Full error details:', {
                 status: response.status,
                 statusText: response.statusText,
                 url: url,
                 body: options.body
             });
-            throw new Error(error || 'Something went wrong');
+            throw new Error(errorMessage);
         }
 
         if (response.status === 204) {
@@ -36,7 +42,6 @@ const request = async (endpoint: string, options: RequestInit = {}) => {
         }
 
         const data = await response.json();
-        console.log('API response data for endpoint:', endpoint, ':', data);
         return data;
     } catch (error: any) {
         console.error('Request failed for endpoint:', endpoint, 'Error:', error);
@@ -60,47 +65,23 @@ const request = async (endpoint: string, options: RequestInit = {}) => {
 };
 
 export const apiService = {
-    // Test connectivity
-    testConnectivity: async () => {
-        try {
-            console.log('Testing API connectivity...');
-            const response = await fetch(`${API_BASE_URL}/UserAPI`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                console.log('✅ API connectivity test successful:', data.length, 'users found');
-                return true;
-            } else {
-                console.error('❌ API connectivity test failed:', response.status, response.statusText);
-                return false;
-            }
-        } catch (error) {
-            console.error('❌ API connectivity test error:', error);
-            return false;
-        }
-    },
     
     // User
     login: (credentials: any) => request('UserAPI/login', {
         method: 'POST',
         body: JSON.stringify(credentials),
     }),
-    register: (userData: any) => request('UserAPI/register', {
-        method: 'POST',
-        body: JSON.stringify(userData),
-    }),
+    register: (userData: any) => {
+        return request('UserAPI/register', {
+            method: 'POST',
+            body: JSON.stringify(userData),
+        });
+    },
     updateUser: (id: number, userData: UpdateUserRequest) => {
-        console.log('Updating user with ID:', id, 'Data:', userData);
         return request(`UserAPI/${id}`, {
             method: 'PUT',
             body: JSON.stringify(userData),
         }).catch(error => {
-            console.error('Update user API error:', error);
             throw error;
         });
     },
@@ -156,4 +137,14 @@ export const apiService = {
 
     // Recommendations
     getRecommendedMovies: () => request(`RecMovieAPI`),
+
+    // Admin-specific endpoints
+    getAllUsers: () => request('UserAPI'),
+    deleteUser: (id: number) => request(`UserAPI/${id}`, {
+        method: 'DELETE',
+    }),
+    updateUserRole: (id: number, role: 'user' | 'admin') => request(`UserAPI/${id}/role`, {
+        method: 'PUT',
+        body: JSON.stringify({ role }),
+    }),
 };

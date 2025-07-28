@@ -49,7 +49,8 @@ public partial class MovieDbContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.Favorites)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__Favorites__UserI__59FA5E80");
+                .HasConstraintName("FK__Favorites__UserI__59FA5E80")
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Movie>(entity =>
@@ -97,6 +98,10 @@ public partial class MovieDbContext : DbContext
             entity.Property(e => e.Username)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+            entity.Property(e => e.Role)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue("user");
         });
 
         modelBuilder.Entity<WatchList>(entity =>
@@ -113,7 +118,8 @@ public partial class MovieDbContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.WatchLists)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__WatchList__UserI__5535A963");
+                .HasConstraintName("FK__WatchList__UserI__5535A963")
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         OnModelCreatingPartial(modelBuilder);

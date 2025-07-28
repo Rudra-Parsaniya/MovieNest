@@ -32,6 +32,9 @@ export const useUserLists = () => {
       setFavorites(favoritesData);
     } catch (error) {
       console.error('Error fetching user lists:', error);
+      // Set empty arrays to prevent further errors
+      setWatchlist([]);
+      setFavorites([]);
     } finally {
       setIsLoading(false);
     }
@@ -45,7 +48,7 @@ export const useUserLists = () => {
       setWatchlist(prev => [...prev, newItem]);
     } catch (error) {
       console.error('Error adding to watchlist:', error);
-      throw error;
+      // Don't throw error, just log it
     }
   };
 
@@ -60,7 +63,7 @@ export const useUserLists = () => {
       }
     } catch (error) {
       console.error('Error removing from watchlist:', error);
-      throw error;
+      // Don't throw error, just log it
     }
   };
 
@@ -72,7 +75,7 @@ export const useUserLists = () => {
       setFavorites(prev => [...prev, newItem]);
     } catch (error) {
       console.error('Error adding to favorites:', error);
-      throw error;
+      // Don't throw error, just log it
     }
   };
 
@@ -87,7 +90,7 @@ export const useUserLists = () => {
       }
     } catch (error) {
       console.error('Error removing from favorites:', error);
-      throw error;
+      // Don't throw error, just log it
     }
   };
 

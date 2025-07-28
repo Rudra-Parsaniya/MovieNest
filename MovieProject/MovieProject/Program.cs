@@ -28,6 +28,9 @@ builder.Services.AddSwaggerGen();
 
 
 builder.Services.AddDbContext<MovieDbContext>(item => item.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//add fluent validation
+ 
 var app = builder.Build();
 
 app.UseExceptionMiddleware();

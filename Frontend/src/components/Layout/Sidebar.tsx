@@ -7,7 +7,9 @@ import {
   User, 
   Film,
   LogOut,
-  Settings
+  Settings,
+  Shield,
+  Users
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -30,13 +32,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { user, isAuthenticated, logout } = useAuth();
 
-  const menuItems = [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'recommended', label: 'Recommended', icon: TrendingUp },
-    { id: 'favorites', label: 'Favorites', icon: Star, count: favoriteCount },
-    { id: 'watchlist', label: 'Watchlist', icon: Bookmark, count: watchlistCount },
-    { id: 'user', label: 'User', icon: User },
-  ];
+  // Different menu items for admin vs user
+  const getMenuItems = () => {
+    if (user?.role === 'admin') {
+      return [
+        { id: 'home', label: 'Home', icon: Home },
+        { id: 'recommended', label: 'Recommended', icon: TrendingUp },
+        { id: 'movies', label: 'Movies', icon: Film },
+        { id: 'users', label: 'Users', icon: Users },
+      ];
+    } else {
+      return [
+        { id: 'home', label: 'Home', icon: Home },
+        { id: 'recommended', label: 'Recommended', icon: TrendingUp },
+        { id: 'favorites', label: 'Favorites', icon: Star, count: favoriteCount },
+        { id: 'watchlist', label: 'Watchlist', icon: Bookmark, count: watchlistCount },
+        { id: 'user', label: 'User', icon: User },
+      ];
+    }
+  };
+
+  const menuItems = getMenuItems();
 
   return (
     <div className="w-64 bg-black border-r border-gray-900 flex flex-col h-screen sticky top-0">
@@ -85,11 +101,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="space-y-3">
             <div className="flex items-center space-x-3 px-4 py-3 bg-gray-800/60 rounded-lg backdrop-blur-lg bg-clip-padding border border-gray-700/30">
               <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
-                <User className="w-5 h-5 text-white" />
+                {user.role === 'admin' ? (
+                  <Shield className="w-5 h-5 text-white" />
+                ) : (
+                  <User className="w-5 h-5 text-white" />
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-white font-medium truncate">{user.fullName}</p>
-                <p className="text-gray-400 text-sm truncate">@{user.username}</p>
+                <div className="flex items-center space-x-2">
+                  <p className="text-gray-400 text-sm truncate">@{user.username}</p>
+                  <span className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${
+                    user.role === 'admin' 
+                      ? 'bg-red-600/20 text-red-400 border border-red-600/30' 
+                      : 'bg-blue-600/20 text-blue-400 border border-blue-600/30'
+                  }`}>
+                    {user.role}
+                  </span>
+                </div>
               </div>
             </div>
             <div className="space-y-1">

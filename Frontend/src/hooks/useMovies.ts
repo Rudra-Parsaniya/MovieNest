@@ -1,87 +1,97 @@
 import { useState, useEffect } from 'react';
-import { Movie, RecommendedMovie } from '../types/movie';
 import { apiService } from '../services/api';
+import { Movie, RecommendedMovie } from '../types/movie';
 
 export const useMovies = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [recommendedMovies, setRecommendedMovies] = useState<RecommendedMovie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchMovies();
-    fetchRecommendedMovies();
-  }, []);
+  const [error, setError] = useState('');
 
   const fetchMovies = async () => {
     try {
-      setIsLoading(true);
-      const moviesData = await apiService.getMovies();
-      setMovies(moviesData);
-    } catch (err) {
-      setError('Failed to fetch movies');
+      const data = await apiService.getMovies();
+      setMovies(data);
+    } catch (err: any) {
       console.error('Error fetching movies:', err);
-    } finally {
-      setIsLoading(false);
+      setError('Failed to load movies. Please check if the backend server is running.');
+      // Set empty array to prevent further errors
+      setMovies([]);
     }
   };
 
   const fetchRecommendedMovies = async () => {
     try {
-      const recommendedData = await apiService.getRecommendedMovies();
-      console.log('Raw recommended response:', recommendedData);
-      setRecommendedMovies(recommendedData);
-    } catch (err) {
+      const data = await apiService.getRecommendedMovies();
+      setRecommendedMovies(data);
+    } catch (err: any) {
       console.error('Error fetching recommended movies:', err);
+      // Don't set error here as it's not critical
+      setRecommendedMovies([]);
     }
   };
 
-  const searchMovies = async (title?: string, genre?: string, year?: number): Promise<Movie[]> => {
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      setError('');
+      
+      try {
+        await Promise.all([fetchMovies(), fetchRecommendedMovies()]);
+      } catch (err) {
+        console.error('Error loading data:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const searchMovies = async (title?: string, genre?: string, year?: number) => {
     try {
-      return await apiService.searchMovies(title, genre, year);
-    } catch (error) {
-      console.error('Search failed:', error);
-      return [];
+      const data = await apiService.searchMovies(title, genre, year);
+      return data;
+    } catch (err: any) {
+      console.error('Error searching movies:', err);
+      throw err;
     }
   };
 
   const createMovie = async (movieData: Omit<Movie, 'movieId'>) => {
     try {
-      const newMovie = await apiService.createMovie(movieData);
-      setMovies(prev => [...prev, newMovie]);
-      return newMovie;
-    } catch (error) {
-      console.error('Create movie failed:', error);
-      throw error;
+      const data = await apiService.createMovie(movieData);
+      await fetchMovies(); // Refresh the movies list
+      return data;
+    } catch (err: any) {
+      console.error('Error creating movie:', err);
+      throw err;
     }
   };
 
-  const updateMovie = async (id: number, movieData: Movie) => {
+  const updateMovie = async (id: number, movieData: Partial<Movie>) => {
     try {
-      const updatedMovie = await apiService.updateMovie(id, movieData);
-      setMovies(prev => prev.map(movie => 
-        movie.movieId === id ? updatedMovie : movie
-      ));
-      return updatedMovie;
-    } catch (error) {
-      console.error('Update movie failed:', error);
-      throw error;
+      const data = await apiService.updateMovie(id, movieData);
+      await fetchMovies(); // Refresh the movies list
+      return data;
+    } catch (err: any) {
+      console.error('Error updating movie:', err);
+      throw err;
     }
   };
 
   const deleteMovie = async (id: number) => {
     try {
       await apiService.deleteMovie(id);
-      setMovies(prev => prev.filter(movie => movie.movieId !== id));
-    } catch (error) {
-      console.error('Delete movie failed:', error);
-      throw error;
+      await fetchMovies(); // Refresh the movies list
+    } catch (err: any) {
+      console.error('Error deleting movie:', err);
+      throw err;
     }
   };
 
-  const getGenres = (): string[] => {
-    const genres = [...new Set(movies.map(movie => movie.movieGenre))];
-    return genres.sort();
+  const refetch = async () => {
+    await Promise.all([fetchMovies(), fetchRecommendedMovies()]);
   };
 
   return {
@@ -93,7 +103,6 @@ export const useMovies = () => {
     createMovie,
     updateMovie,
     deleteMovie,
-    getGenres,
-    refetch: fetchMovies,
+    refetch,
   };
 };

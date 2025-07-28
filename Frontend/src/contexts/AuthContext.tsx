@@ -10,7 +10,7 @@ interface AuthContextType {
   register: (userData: RegisterRequest) => Promise<void>;
   logout: () => void;
   updateUser: (userData: Partial<User>) => Promise<void>;
-  testConnectivity: () => Promise<boolean>;
+
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,7 +38,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (userData) {
       try {
         const parsedUser = JSON.parse(userData);
-        console.log('AuthContext: Loading user from localStorage:', parsedUser);
         
         // Validate and clean user data
         const normalizedUser: User = {
@@ -48,6 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           fullName: parsedUser.fullName || parsedUser.FullName || '',
           age: parsedUser.age || parsedUser.Age || 0,
           email: parsedUser.email || parsedUser.Email || '',
+          role: parsedUser.role || parsedUser.Role || 'user',
           createdAt: parsedUser.createdAt || parsedUser.CreatedAt || new Date().toISOString(),
         };
         
@@ -73,9 +73,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         Username: credentials.username,
         Password: credentials.password,
       };
-      console.log('AuthContext: Login payload:', payload);
       const userResponse = await apiService.login(payload);
-      console.log('AuthContext: Login response user:', userResponse);
       
       // Normalize user data to handle both camelCase and PascalCase
       const user: User = {
@@ -85,6 +83,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         fullName: userResponse.fullName || userResponse.FullName,
         age: userResponse.age || userResponse.Age,
         email: userResponse.email || userResponse.Email,
+        role: userResponse.role || userResponse.Role || 'user', // Default to 'user' if backend doesn't provide role
         createdAt: userResponse.createdAt || userResponse.CreatedAt,
       };
       
@@ -104,6 +103,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         Email: userData.email,
         FullName: userData.fullName,
         Age: userData.age ? parseInt(String(userData.age), 10) : undefined,
+        // Role: userData.role, // Commented out until backend supports it
       };
       const userResponse = await apiService.register(payload);
       
@@ -115,6 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         fullName: userResponse.fullName || userResponse.FullName,
         age: userResponse.age || userResponse.Age,
         email: userResponse.email || userResponse.Email,
+        role: userResponse.role || userResponse.Role || userData.role || 'user', // Use selected role or default to 'user'
         createdAt: userResponse.createdAt || userResponse.CreatedAt,
       };
       
@@ -145,6 +146,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         Email: (userData.email ?? user.email).trim(),
         Age: age,
         PasswordHash: (userData as any).password || user.passwordHash, // Use new password if provided, otherwise keep current
+        Role: userData.role || user.role, // Include role if backend supports it
       };
       
       // Validate required fields
@@ -158,9 +160,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error('Invalid email format');
       }
       
-      console.log('AuthContext: Sending payload to API:', payload);
       const userResponse = await apiService.updateUser(user.userId, payload);
-      console.log('AuthContext: Received updated user response:', userResponse);
       
       // Normalize user data to handle both camelCase and PascalCase
       const updatedUser: User = {
@@ -170,6 +170,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         fullName: userResponse.fullName || userResponse.FullName,
         age: userResponse.age || userResponse.Age,
         email: userResponse.email || userResponse.Email,
+        role: userResponse.role || userResponse.Role || user.role, // Keep existing role if backend doesn't return it
         createdAt: userResponse.createdAt || userResponse.CreatedAt,
       };
       
@@ -186,16 +187,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('user');
   };
 
-  const testConnectivity = async () => {
-    try {
-      await apiService.testConnectivity();
-      return true;
-    } catch (error) {
-      console.error('Connectivity test failed:', error);
-      return false;
-    }
-  };
-
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -204,7 +195,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register,
     logout,
     updateUser,
-    testConnectivity,
   };
 
   return (

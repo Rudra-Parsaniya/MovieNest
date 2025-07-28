@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Eye, EyeOff, Film } from 'lucide-react';
+import { X, Eye, EyeOff, Film, Shield, User } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface AuthModalProps {
@@ -19,6 +19,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     fullName: '',
     age: '',
     email: '',
+    role: 'user' as 'user' | 'admin',
   });
 
   const { login, register } = useAuth();
@@ -38,6 +39,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         const regData: any = {
           username: formData.username,
           password: formData.password,
+          role: formData.role,
         };
         if (formData.fullName) regData.fullName = formData.fullName;
         if (formData.email) regData.email = formData.email;
@@ -51,6 +53,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         fullName: '',
         age: '',
         email: '',
+        role: 'user',
       });
     } catch (err: any) {
       setError(err.message || 'Authentication failed. Please try again.');
@@ -59,7 +62,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -178,6 +181,53 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
                   placeholder="Enter your age"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Account Type
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <label className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                    formData.role === 'user' 
+                      ? 'border-blue-500 bg-blue-500/20' 
+                      : 'border-gray-700 bg-gray-800 hover:border-gray-600'
+                  }`}>
+                    <input
+                      type="radio"
+                      name="role"
+                      value="user"
+                      checked={formData.role === 'user'}
+                      onChange={handleInputChange}
+                      className="sr-only"
+                    />
+                    <User className="w-5 h-5 text-blue-400" />
+                    <div>
+                      <div className="text-white font-medium">User</div>
+                      <div className="text-gray-400 text-sm">Browse movies & manage lists</div>
+                    </div>
+                  </label>
+                  
+                  <label className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                    formData.role === 'admin' 
+                      ? 'border-red-500 bg-red-500/20' 
+                      : 'border-gray-700 bg-gray-800 hover:border-gray-600'
+                  }`}>
+                    <input
+                      type="radio"
+                      name="role"
+                      value="admin"
+                      checked={formData.role === 'admin'}
+                      onChange={handleInputChange}
+                      className="sr-only"
+                    />
+                    <Shield className="w-5 h-5 text-red-400" />
+                    <div>
+                      <div className="text-white font-medium">Admin</div>
+                      <div className="text-gray-400 text-sm">Manage movies & users</div>
+                    </div>
+                  </label>
+                </div>
               </div>
             </>
           )}

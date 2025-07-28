@@ -143,10 +143,6 @@ namespace MovieProject.Controllers
             return context.WatchLists.Any(e => e.WatchlistId == id);
         }
 
-        [HttpGet("test-exception")]
-        public IActionResult ThrowTestException()
-        {
-            throw new Exception("This is a test exception.");
-        }
+
     }
 }

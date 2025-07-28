@@ -8,13 +8,17 @@ import { AddEditMovieModal } from './components/Movies/AddEditMovieModal';
 import { AuthModal } from './components/Auth/AuthModal';
 import { ProfileModal } from './components/Profile/ProfileModal';
 import UserDetailsPage from './components/User/UserDetailsPage';
-import { AuthProvider } from './contexts/AuthContext';
+import { AdminMovies } from './components/Admin/AdminMovies';
+import { AdminUsers } from './components/Admin/AdminUsers';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { useMovies } from './hooks/useMovies';
 import { useUserLists } from './hooks/useUserLists';
 import { Movie, RecommendedMovie } from './types/movie';
 import { apiService } from './services/api';
 
 function AppContent() {
+  const { user } = useAuth();
+  
   // On load, get last view from localStorage
   const [currentView, setCurrentView] = useState(() => localStorage.getItem('currentView') || 'home');
 
@@ -32,6 +36,8 @@ function AppContent() {
   const [isSearching, setIsSearching] = useState(false);
   const [totalUsers, setTotalUsers] = useState(1); // Default to 1 for demo purposes
 
+
+
   const { 
     movies, 
     recommendedMovies, 
@@ -43,8 +49,7 @@ function AppContent() {
     refetch 
   } = useMovies();
   
-  // Debug log for recommended movies
-  console.log('AppContent: recommendedMovies', recommendedMovies);
+
   
   const {
     watchlist,
@@ -138,17 +143,17 @@ function AppContent() {
   const getRecommendedMoviesData = (): Movie[] => {
     return recommendedMovies
       .map((rec: RecommendedMovie) => {
-        const src = rec.movie ?? rec.Movie;
+        const src = rec.movie;
         if (!src) return undefined;
         return {
-          movieId: src.movieId ?? src.MovieId,
-          movieTitle: src.movieTitle ?? src.MovieTitle ?? '',
-          movieGenre: src.movieGenre ?? src.MovieGenre ?? '',
-          releaseYear: src.releaseYear ?? src.ReleaseYear ?? 0,
-          imgUrl: src.imgUrl ?? src.ImgUrl ?? '',
-          rating: src.rating ?? src.Rating ?? 0,
-          description: src.description ?? src.Description ?? '',
-          duration: src.duration ?? src.Duration ?? 0,
+          movieId: src.movieId,
+          movieTitle: src.movieTitle,
+          movieGenre: src.movieGenre,
+          releaseYear: src.releaseYear,
+          imgUrl: src.imgUrl,
+          rating: src.rating,
+          description: src.description,
+          duration: src.duration,
         } as Movie;
       })
       .filter(Boolean) as Movie[];
@@ -188,6 +193,8 @@ function AppContent() {
       case 'favorites': return 'My Favorites';
       case 'watchlist': return 'My Watchlist';
       case 'user': return 'User Details';
+      case 'movies': return 'Movie Management';
+      case 'users': return 'User Management';
       default: return 'MovieNest';
     }
   };
@@ -219,6 +226,7 @@ function AppContent() {
             watchlistCount={watchlist.length}
             totalMovies={movies.length}
             totalUsers={totalUsers}
+
           />
         );
       case 'recommended':
@@ -273,6 +281,10 @@ function AppContent() {
         );
       case 'user':
         return <UserDetailsPage />; // Update renderContent for user
+      case 'movies':
+        return user?.role === 'admin' ? <AdminMovies /> : <div>Access Denied</div>;
+      case 'users':
+        return user?.role === 'admin' ? <AdminUsers /> : <div>Access Denied</div>;
       default:
         return (
           <MovieGrid

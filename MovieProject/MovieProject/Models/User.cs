@@ -18,6 +18,8 @@ public partial class User
 
     public string? Email { get; set; }
 
+    public string Role { get; set; } = "user";
+
     public DateTime? CreatedAt { get; set; }
 
     [JsonIgnore]

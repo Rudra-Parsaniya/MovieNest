@@ -8,12 +8,11 @@ interface ProfileModalProps {
 }
 
 export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
-  const { user, updateUser, testConnectivity } = useAuth();
+  const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [connectivityStatus, setConnectivityStatus] = useState('');
   
   const [formData, setFormData] = useState({
     username: '',
@@ -42,7 +41,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
     setSuccess('');
 
     try {
-      console.log('ProfileModal: Form data before update:', formData);
+
       
       // Validate form data
       if (!formData.username.trim() || !formData.fullName.trim() || !formData.email.trim()) {
@@ -66,9 +65,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
         updatePayload.password = formData.password;
       }
       
-      console.log('ProfileModal: Sending update payload:', updatePayload);
       await updateUser(updatePayload);
-      console.log('ProfileModal: Update successful');
       setSuccess('Profile updated successfully!');
       setIsEditing(false);
       // Clear password field after successful update
@@ -88,19 +85,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
     });
   };
 
-  const handleTestConnectivity = async () => {
-    try {
-      setConnectivityStatus('Testing connection...');
-      const isConnected = await testConnectivity();
-      if (isConnected) {
-        setConnectivityStatus('✅ API connection successful!');
-      } else {
-        setConnectivityStatus('❌ API connection failed!');
-      }
-    } catch (error) {
-      setConnectivityStatus('❌ Connection test error!');
-    }
-  };
+
 
   if (!isOpen || !user) return null;
 
@@ -279,19 +264,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               <span>Edit Profile</span>
             </button>
             
-            {/* Connectivity Test */}
-            <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-300 mb-2">API Connection Test</h3>
-              {connectivityStatus && (
-                <p className="text-xs text-gray-400 mb-2">{connectivityStatus}</p>
-              )}
-              <button
-                onClick={handleTestConnectivity}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-sm transition-colors"
-              >
-                Test API Connection
-              </button>
-            </div>
+
           </div>
         )}
       </div>

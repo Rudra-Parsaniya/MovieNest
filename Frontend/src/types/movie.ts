@@ -22,6 +22,7 @@ export interface User {
   fullName: string;
   age: number;
   email: string;
+  role: 'user' | 'admin';
   createdAt: string;
   // Backend might use PascalCase versions
   UserId?: number;
@@ -30,6 +31,7 @@ export interface User {
   FullName?: string;
   Age?: number;
   Email?: string;
+  Role?: 'user' | 'admin';
   CreatedAt?: string;
 }
 
@@ -65,6 +67,7 @@ export interface RegisterRequest {
   fullName: string;
   age: number;
   email: string;
+  role: 'user' | 'admin';
 }
 
 export interface UpdateUserRequest {
@@ -74,4 +77,26 @@ export interface UpdateUserRequest {
   Email: string;
   Age: number;
   PasswordHash: string;
+  Role: 'user' | 'admin';
+}
+
+// Admin-specific types
+export interface AdminMovieData {
+  movieTitle: string;
+  movieGenre: string;
+  releaseYear: number;
+  imgUrl: string;
+  rating: number;
+  description: string;
+  duration: number;
+}
+
+export interface AdminUserData {
+  userId: number;
+  username: string;
+  fullName: string;
+  age: number;
+  email: string;
+  role: 'user' | 'admin';
+  createdAt: string;
 }
