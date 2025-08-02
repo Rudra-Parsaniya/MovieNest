@@ -47,12 +47,12 @@ export const MovieModal: React.FC<MovieModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-black rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/95 backdrop-blur-lg flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="card-dark rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto animate-scale-in">
         <div className="relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+            className="absolute top-4 right-4 z-10 bg-black/60 hover:bg-black/80 text-white p-3 rounded-full transition-all duration-300 transform hover:scale-110 hover:rotate-90"
           >
             <X className="w-6 h-6" />
           </button>
@@ -62,21 +62,21 @@ export const MovieModal: React.FC<MovieModalProps> = ({
             <img
               src={movie.imgUrl || 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg'}
               alt={movie.movieTitle}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.src = 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg';
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-gray-900/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent" />
             
             {/* Movie Info Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-8">
+            <div className="absolute bottom-0 left-0 right-0 p-8 animate-slide-in-left animate-delay-200">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h1 className="text-4xl font-bold text-white mb-4">{movie.movieTitle}</h1>
+                  <h1 className="text-5xl font-bold text-gradient mb-6 animate-fade-in">{movie.movieTitle}</h1>
                   
-                  <div className="flex items-center space-x-6 text-gray-300 mb-4">
+                  <div className="flex items-center space-x-6 text-gray-300 mb-6 animate-fade-in animate-delay-300">
                     <div className="flex items-center space-x-1">
                       <Star className="w-5 h-5 text-yellow-400 fill-current" />
                       <span className="font-medium">{movie.rating}</span>
@@ -89,35 +89,35 @@ export const MovieModal: React.FC<MovieModalProps> = ({
                       <Clock className="w-5 h-5" />
                       <span>{movie.duration} min</span>
                     </div>
-                    <span className="bg-gray-800/80 px-3 py-1 rounded-full text-sm">
+                    <span className="glass-effect px-4 py-2 rounded-full text-sm font-semibold">
                       {movie.movieGenre}
                     </span>
                   </div>
 
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-4 animate-fade-in animate-delay-400">
                     {isAuthenticated && (
                       <>
                         <button
                           onClick={handleWatchlistClick}
-                          className={`p-3 rounded-lg border-2 transition-colors ${
+                          className={`p-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-110 ${
                             isInWatchlist
-                              ? 'bg-blue-600 border-blue-600 text-white'
-                              : 'border-gray-600 text-gray-300 hover:border-blue-600 hover:text-blue-400'
+                              ? 'bg-blue-600 border-blue-600 text-white hover-glow'
+                              : 'border-gray-600 text-gray-300 hover:border-blue-600 hover:text-blue-400 hover:bg-blue-600/20'
                           }`}
                           title={isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
                         >
-                          <Bookmark className="w-5 h-5" />
+                          <Bookmark className="w-6 h-6" />
                         </button>
                         <button
                           onClick={handleFavoritesClick}
-                          className={`p-3 rounded-lg border-2 transition-colors ${
+                          className={`p-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-110 ${
                             isInFavorites
-                              ? 'bg-red-600 border-red-600 text-white'
-                              : 'border-gray-600 text-gray-300 hover:border-red-600 hover:text-red-400'
+                              ? 'bg-red-600 border-red-600 text-white hover-glow'
+                              : 'border-gray-600 text-gray-300 hover:border-red-600 hover:text-red-400 hover:bg-red-600/20'
                           }`}
                           title={isInFavorites ? 'Remove from Favorites' : 'Add to Favorites'}
                         >
-                          <Heart className="w-5 h-5" />
+                          <Heart className="w-6 h-6" />
                         </button>
                       </>
                     )}
@@ -128,36 +128,36 @@ export const MovieModal: React.FC<MovieModalProps> = ({
           </div>
 
           {/* Content Section */}
-          <div className="p-8">
+          <div className="p-8 animate-fade-in animate-delay-500">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
-                <h2 className="text-2xl font-bold text-white mb-4">Overview</h2>
-                <p className="text-gray-300 text-lg leading-relaxed">
+                <h2 className="text-3xl font-bold text-gradient mb-6">Overview</h2>
+                <p className="text-gray-300 text-xl leading-relaxed">
                   {movie.description}
                 </p>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-3">Movie Details</h3>
+                  <h3 className="text-xl font-semibold text-gradient mb-4">Movie Details</h3>
                   <div className="space-y-2 text-gray-300">
                     <div className="flex justify-between">
                       <span>Genre:</span>
-                      <span className="text-white">{movie.movieGenre}</span>
+                      <span className="text-gradient font-semibold">{movie.movieGenre}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Release Year:</span>
-                      <span className="text-white">{movie.releaseYear}</span>
+                      <span className="text-gradient font-semibold">{movie.releaseYear}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Duration:</span>
-                      <span className="text-white">{movie.duration} minutes</span>
+                      <span className="text-gradient font-semibold">{movie.duration} minutes</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Rating:</span>
                       <div className="flex items-center space-x-1">
                         <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                        <span className="text-white">{movie.rating}/10</span>
+                        <span className="text-gradient font-semibold">{movie.rating}/10</span>
                       </div>
                     </div>
                   </div>

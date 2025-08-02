@@ -70,19 +70,34 @@ namespace MovieProject.Controllers
         }
 
         [HttpPut("{MovieID}")]
-        public async Task<ActionResult<Movie>> UpdateMovie(int MovieID, Movie mov)
+        public async Task<ActionResult<Movie>> UpdateMovie(int MovieID, MovieUpdateDto dto)
         {
-            if (MovieID != mov.MovieId)
+            if (MovieID != dto.MovieId)
             {
-                return BadRequest();
-
+                return BadRequest("Movie ID mismatch");
             }
-            context.Entry(mov).State = EntityState.Modified;
+
+            var movie = await context.Movies.FindAsync(MovieID);
+            if (movie == null)
+            {
+                return NotFound("Movie not found");
+            }
+
+            // Update the movie properties
+            movie.MovieTitle = dto.MovieTitle;
+            movie.MovieGenre = dto.MovieGenre;
+            movie.ReleaseYear = dto.ReleaseYear;
+            movie.ImgUrl = dto.ImgUrl;
+            movie.Rating = dto.Rating;
+            movie.Description = dto.Description;
+            movie.Duration = dto.Duration;
+
+            context.Entry(movie).State = EntityState.Modified;
             await context.SaveChangesAsync();
-            return Ok(mov);
+            return Ok(movie);
         }
 
-        // GET: api/MovieAPI/search?title=avengers
+        // GET: api/MovieAPI/search?title=avengers&genre=Action,Comedy&year=2020
         [HttpGet("search")]
         public async Task<ActionResult<List<Movie>>> SearchMovies(string? title, string? genre, int? year)
         {
@@ -92,7 +107,18 @@ namespace MovieProject.Controllers
                 query = query.Where(m => m.MovieTitle.Contains(title));
 
             if (!string.IsNullOrWhiteSpace(genre))
-                query = query.Where(m => m.MovieGenre == genre);
+            {
+                var genres = genre.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(g => g.Trim())
+                    .Where(g => !string.IsNullOrWhiteSpace(g))
+                    .ToList();
+                
+                if (genres.Any())
+                {
+                    query = query.Where(m => genres.Any(g => 
+                        m.MovieGenre != null && m.MovieGenre.Contains(g)));
+                }
+            }
 
             if (year.HasValue)
                 query = query.Where(m => m.ReleaseYear == year.Value);
@@ -104,13 +130,20 @@ namespace MovieProject.Controllers
         [HttpGet("genres")]
         public async Task<ActionResult<List<string>>> GetGenres()
         {
-            var genres = await context.Movies
+            var allGenres = await context.Movies
+                .Where(m => !string.IsNullOrEmpty(m.MovieGenre))
                 .Select(m => m.MovieGenre)
-                .Distinct()
-                .OrderBy(g => g)
                 .ToListAsync();
 
-            return Ok(genres);
+            var individualGenres = allGenres
+                .SelectMany(g => g?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? new string[0])
+                .Select(g => g.Trim())
+                .Where(g => !string.IsNullOrWhiteSpace(g))
+                .Distinct()
+                .OrderBy(g => g)
+                .ToList();
+
+            return Ok(individualGenres);
         }
 
         [HttpGet("years")]

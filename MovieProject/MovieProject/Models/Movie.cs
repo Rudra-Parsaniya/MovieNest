@@ -11,7 +11,7 @@ public partial class Movie
 
     public string MovieTitle { get; set; } = null!;
 
-    public string? MovieGenre { get; set; }
+    public string? MovieGenre { get; set; } // Comma-separated genres
 
     public int? ReleaseYear { get; set; }
 

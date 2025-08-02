@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Search, Filter, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Filter, X, Star } from 'lucide-react';
 import { Movie, AdminMovieData } from '../../types/movie';
 import { apiService } from '../../services/api';
 import { AddEditMovieModal } from '../Movies/AddEditMovieModal';
+import { MovieCard } from '../Movies/MovieCard';
+import { MultiSelect } from '../Movies/MultiSelect';
 
 export const AdminMovies: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -10,7 +12,7 @@ export const AdminMovies: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState('');
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
 
@@ -26,7 +28,7 @@ export const AdminMovies: React.FC = () => {
 
   useEffect(() => {
     filterMovies();
-  }, [movies, searchQuery, selectedGenre]);
+  }, [movies, searchQuery, selectedGenres]);
 
   const loadMovies = async () => {
     try {
@@ -52,8 +54,12 @@ export const AdminMovies: React.FC = () => {
       );
     }
 
-    if (selectedGenre) {
-      filtered = filtered.filter(movie => movie.movieGenre === selectedGenre);
+    if (selectedGenres.length > 0) {
+      filtered = filtered.filter(movie => 
+        selectedGenres.some(genre => 
+          movie.movieGenre && movie.movieGenre.includes(genre)
+        )
+      );
     }
 
     setFilteredMovies(filtered);
@@ -92,6 +98,16 @@ export const AdminMovies: React.FC = () => {
     }
   };
 
+  const handleAddToRecommended = async (movieId: number) => {
+    try {
+      await apiService.addRecommendedMovie(movieId);
+      // Show success message or update UI as needed
+      alert('Movie added to recommended section successfully!');
+    } catch (err: any) {
+      setError(err.message || 'Failed to add movie to recommended section');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -120,7 +136,7 @@ export const AdminMovies: React.FC = () => {
       )}
 
       {/* Search and Filter */}
-      <div className="bg-gray-900 rounded-lg p-4 mb-6">
+      <div className="bg-black rounded-lg p-4 mb-6">
         <div className="flex items-center space-x-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -129,27 +145,23 @@ export const AdminMovies: React.FC = () => {
               placeholder="Search movies..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-800 text-white pl-10 pr-4 py-2 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+              className="w-full bg-black text-white pl-10 pr-4 py-2 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
             />
           </div>
-          <div className="relative">
-            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <select
-              value={selectedGenre}
-              onChange={(e) => setSelectedGenre(e.target.value)}
-              className="bg-gray-800 text-white pl-10 pr-8 py-2 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 appearance-none"
-            >
-              <option value="">All Genres</option>
-              {genres.map(genre => (
-                <option key={genre} value={genre}>{genre}</option>
-              ))}
-            </select>
+          <div className="w-64">
+            <MultiSelect
+              options={genres}
+              value={selectedGenres}
+              onChange={setSelectedGenres}
+              placeholder="Filter by genres..."
+              className="w-full"
+            />
           </div>
-          {(searchQuery || selectedGenre) && (
+          {(searchQuery || selectedGenres.length > 0) && (
             <button
               onClick={() => {
                 setSearchQuery('');
-                setSelectedGenre('');
+                setSelectedGenres([]);
               }}
               className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
             >
@@ -160,61 +172,23 @@ export const AdminMovies: React.FC = () => {
       </div>
 
       {/* Movies Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
         {filteredMovies.map((movie) => (
-          <div key={movie.movieId} className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800 hover:border-gray-700 transition-colors">
-            <div className="relative">
-              <img
-                src={movie.imgUrl}
-                alt={movie.movieTitle}
-                className="w-full h-48 object-cover"
-                onError={(e) => {
-                  e.currentTarget.src = '/public/MAX.webp';
-                }}
-              />
-              <div className="absolute top-2 right-2 flex space-x-1">
-                <button
-                  onClick={() => setEditingMovie(movie)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors"
-                  title="Edit"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleDeleteMovie(movie.movieId)}
-                  className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition-colors"
-                  title="Delete"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-            <div className="p-4">
-              <h3 className="text-white font-semibold text-lg mb-2 truncate">
-                {movie.movieTitle}
-              </h3>
-              <div className="flex items-center justify-between text-sm text-gray-400 mb-2">
-                <span>{movie.movieGenre}</span>
-                <span>{movie.releaseYear}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm text-gray-400">
-                <span>{movie.duration} min</span>
-                <span className="flex items-center">
-                  ⭐ {movie.rating}/10
-                </span>
-              </div>
-              <p className="text-gray-400 text-sm mt-2 line-clamp-2">
-                {movie.description}
-              </p>
-            </div>
-          </div>
+          <MovieCard
+            key={movie.movieId}
+            movie={movie}
+            showActions={false}
+            onDelete={handleDeleteMovie}
+            onAddRecommended={handleAddToRecommended}
+            onClick={() => setEditingMovie(movie)}
+          />
         ))}
       </div>
 
       {filteredMovies.length === 0 && !isLoading && (
         <div className="text-center py-12">
           <div className="text-gray-400 text-lg">
-            {searchQuery || selectedGenre ? 'No movies found matching your criteria' : 'No movies available'}
+            {searchQuery || selectedGenres.length > 0 ? 'No movies found matching your criteria' : 'No movies available'}
           </div>
         </div>
       )}

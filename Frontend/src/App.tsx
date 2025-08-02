@@ -34,7 +34,8 @@ function AppContent() {
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
   const [searchResults, setSearchResults] = useState<Movie[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [totalUsers, setTotalUsers] = useState(1); // Default to 1 for demo purposes
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalAdminsCount, setTotalAdminsCount] = useState(0);
 
 
 
@@ -62,8 +63,25 @@ function AppContent() {
     isInFavorites,
   } = useUserLists();
 
-  // Remove the fetchTotalUsers function and useEffect since there's no backend
-  // In a real application, this would fetch from your backend API
+  // Fetch total users and admins count
+  useEffect(() => {
+    const fetchUserCounts = async () => {
+      try {
+        const users = await apiService.getAllUsers();
+        setTotalUsers(users.length);
+        const adminCount = users.filter((user: any) => user.role === 'admin' || user.Role === 'admin').length;
+        setTotalAdminsCount(adminCount);
+      } catch (error) {
+        console.error('Failed to fetch user counts:', error);
+        setTotalUsers(0);
+        setTotalAdminsCount(0);
+      }
+    };
+
+    fetchUserCounts();
+  }, []);
+
+  // User counts are now fetched from the backend API
 
   const handleSearch = async (query: string) => {
     if (!query.trim()) {
@@ -82,7 +100,7 @@ function AppContent() {
     }
   };
 
-  const handleAdvancedSearch = async (title?: string, genre?: string, year?: number) => {
+  const handleAdvancedSearch = async (title?: string, genre?: string | string[], year?: number) => {
     if (!title && !genre && year === undefined) {
       setIsSearching(false);
       setSearchResults([]);
@@ -139,6 +157,22 @@ function AppContent() {
     await removeFromWatchlist(movieId);
     refetch();
   };
+
+  // Handler to delete a recommended movie (admin only)
+  const handleDeleteRecommendedMovie = async (movieId: number) => {
+    const recMovie = recommendedMovies.find((rec: RecommendedMovie) => rec.movie?.movieId === movieId);
+    if (!recMovie) return;
+    await apiService.deleteRecommendedMovie(recMovie.recId);
+    refetch();
+  };
+
+  // Handler to add a movie to recommended (admin only)
+  const handleAddRecommendedMovie = async (movieId: number) => {
+    await apiService.addRecommendedMovie(movieId);
+    refetch();
+  };
+  // Get recommended movie IDs
+  const recommendedMovieIds = recommendedMovies.map((rec: RecommendedMovie) => rec.movie?.movieId).filter(Boolean);
 
   const getRecommendedMoviesData = (): Movie[] => {
     return recommendedMovies
@@ -226,7 +260,8 @@ function AppContent() {
             watchlistCount={watchlist.length}
             totalMovies={movies.length}
             totalUsers={totalUsers}
-
+            recommendedMoviesCount={recommendedMovies.length}
+            totalAdminsCount={totalAdminsCount}
           />
         );
       case 'recommended':
@@ -243,6 +278,8 @@ function AppContent() {
             onMovieClick={handleMovieClick}
             onEditMovie={handleEditMovie}
             isLoading={isLoading}
+            showActions={user?.role !== 'admin'}
+            onDeleteMovie={user?.role === 'admin' ? handleDeleteRecommendedMovie : undefined}
           />
         );
       case 'favorites':
@@ -300,6 +337,8 @@ function AppContent() {
             onEditMovie={handleEditMovie}
             onDeleteMovie={handleDeleteMovie}
             isLoading={isLoading}
+            onAddRecommended={user?.role === 'admin' ? handleAddRecommendedMovie : undefined}
+            recommendedMovieIds={recommendedMovieIds}
           />
         );
     }
@@ -307,7 +346,7 @@ function AppContent() {
 
   return (
     <div 
-      className="min-h-screen flex bg-black text-slate-100"
+      className="min-h-screen flex container-dark text-slate-100"
     >
       <Sidebar
         currentView={currentView}
@@ -326,7 +365,7 @@ function AppContent() {
           onShowAuth={() => setShowAuthModal(true)}
         />
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto section-padding">
           {renderContent()}
         </main>
       </div>

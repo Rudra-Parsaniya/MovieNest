@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Search, User, Heart, Bookmark, LogOut, Film, Filter, X, Shield, Wifi, WifiOff } from 'lucide-react';
 import { apiService } from '../../services/api';
+import { MultiSelect } from '../Movies/MultiSelect';
 
 interface HeaderProps {
   onSearch: (query: string) => void;
-  onAdvancedSearch: (title?: string, genre?: string, year?: number) => void;
+  onAdvancedSearch: (title?: string, genre?: string | string[], year?: number) => void;
   onShowAuth: () => void;
   title: string;
 }
@@ -20,9 +21,9 @@ export const Header: React.FC<HeaderProps> = ({
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [advancedSearch, setAdvancedSearch] = useState({
     title: '',
-    genre: '',
     year: ''
   });
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const { user, isAuthenticated, logout } = useAuth();
 
   const genres = [
@@ -40,20 +41,21 @@ export const Header: React.FC<HeaderProps> = ({
 
   const handleAdvancedSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const { title, genre, year } = advancedSearch;
+    const { title, year } = advancedSearch;
     const yearNum = year ? parseInt(year) : undefined;
     
-    if (title || genre || year) {
+    if (title || selectedGenres.length > 0 || year) {
       onAdvancedSearch(
         title || undefined,
-        genre || undefined,
+        selectedGenres.length > 0 ? selectedGenres : undefined,
         yearNum
       );
     }
   };
 
   const clearAdvancedSearch = () => {
-    setAdvancedSearch({ title: '', genre: '', year: '' });
+    setAdvancedSearch({ title: '', year: '' });
+    setSelectedGenres([]);
     onAdvancedSearch();
   };
 
@@ -65,16 +67,16 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="bg-black/95 backdrop-blur-sm border-b border-black sticky top-0 z-50">
+    <header className="bg-black/95 backdrop-blur-sm border-b border-gray-900 sticky top-0 z-50 animate-slide-in-right">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo and Title */}
-          <div className="flex items-center space-x-4">
-            <h2 className="text-xl font-semibold text-white">{title}</h2>
+          <div className="flex items-center space-x-4 animate-fade-in">
+            <h2 className="text-xl font-semibold text-gradient">{title}</h2>
           </div>
 
           {/* Search Section */}
-          <div className="flex-1 max-w-2xl mx-8">
+          <div className="flex-1 max-w-2xl mx-8 animate-fade-in animate-delay-200">
             {/* Simple Search */}
             {!showAdvancedSearch && (
               <form onSubmit={handleSimpleSearch} className="flex items-center space-x-2">
@@ -85,13 +87,13 @@ export const Header: React.FC<HeaderProps> = ({
                     placeholder="Search movies by title..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full bg-gray-800 text-white pl-10 pr-4 py-2 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                    className="w-full input-dark pl-10 pr-4 py-2 transition-all duration-300 focus:scale-105"
                   />
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowAdvancedSearch(true)}
-                  className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+                  className="p-2 text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-all duration-300 transform hover:scale-110"
                   title="Advanced Search"
                 >
                   <Filter className="w-5 h-5" />
@@ -101,7 +103,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Advanced Search */}
             {showAdvancedSearch && (
-              <form onSubmit={handleAdvancedSearch} className="space-y-2">
+              <form onSubmit={handleAdvancedSearch} className="space-y-2 animate-scale-in">
                 <div className="flex items-center space-x-2">
                   <div className="flex-1">
                     <input
@@ -109,20 +111,17 @@ export const Header: React.FC<HeaderProps> = ({
                       placeholder="Movie title..."
                       value={advancedSearch.title}
                       onChange={(e) => handleInputChange('title', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 text-sm"
+                      className="w-full input-dark px-3 py-2 text-sm"
                     />
                   </div>
                   <div className="flex-1">
-                    <select
-                      value={advancedSearch.genre}
-                      onChange={(e) => handleInputChange('genre', e.target.value)}
-                      className="w-full bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 text-sm"
-                    >
-                      <option value="">All Genres</option>
-                      {genres.map(genre => (
-                        <option key={genre} value={genre}>{genre}</option>
-                      ))}
-                    </select>
+                    <MultiSelect
+                      options={genres}
+                      value={selectedGenres}
+                      onChange={setSelectedGenres}
+                      placeholder="Select genres..."
+                      className="w-full"
+                    />
                   </div>
                   <div className="w-24">
                     <input
@@ -132,19 +131,19 @@ export const Header: React.FC<HeaderProps> = ({
                       onChange={(e) => handleInputChange('year', e.target.value)}
                       min="1900"
                       max={new Date().getFullYear() + 5}
-                      className="w-full bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 text-sm"
+                      className="w-full input-dark px-3 py-2 text-sm"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                    className="btn-primary px-4 py-2 text-sm"
                   >
                     Search
                   </button>
                   <button
                     type="button"
                     onClick={clearAdvancedSearch}
-                    className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+                    className="p-2 text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-all duration-300 transform hover:scale-110"
                     title="Clear Search"
                   >
                     <X className="w-4 h-4" />
@@ -152,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <button
                     type="button"
                     onClick={() => setShowAdvancedSearch(false)}
-                    className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+                    className="p-2 text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-all duration-300 transform hover:scale-110"
                     title="Simple Search"
                   >
                     <Search className="w-4 h-4" />
@@ -163,19 +162,19 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* User Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 animate-fade-in animate-delay-300">
             {isAuthenticated ? (
               <>
                 <button
                   onClick={logout}
-                  className="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+                  className="p-2 text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-all duration-300 transform hover:scale-110"
                   title="Logout"
                 >
                   <LogOut className="w-5 h-5" />
                 </button>
                 {/* Admin indicator */}
                 {user?.role === 'admin' && (
-                  <div className="flex items-center space-x-2 text-green-400">
+                  <div className="flex items-center space-x-2 text-red-400 animate-pulse-subtle">
                     <Shield className="w-4 h-4" />
                     <span className="text-sm">Admin</span>
                   </div>
@@ -185,7 +184,7 @@ export const Header: React.FC<HeaderProps> = ({
               <>
                 <button
                   onClick={onShowAuth}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="btn-primary"
                 >
                   Sign In
                 </button>

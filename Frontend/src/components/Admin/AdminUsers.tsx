@@ -104,7 +104,7 @@ export const AdminUsers: React.FC = () => {
       )}
 
       {/* Search and Filter */}
-      <div className="bg-gray-900 rounded-lg p-4 mb-6">
+      <div className="bg-black rounded-lg p-4 mb-6">
         <div className="flex items-center space-x-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -113,7 +113,7 @@ export const AdminUsers: React.FC = () => {
               placeholder="Search users by name, username, or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-800 text-white pl-10 pr-4 py-2 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+              className="w-full bg-black text-white pl-10 pr-4 py-2 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
             />
           </div>
           <div className="relative">
@@ -121,7 +121,7 @@ export const AdminUsers: React.FC = () => {
             <select
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
-              className="bg-gray-800 text-white pl-10 pr-8 py-2 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 appearance-none"
+              className="bg-black text-white pl-10 pr-8 py-2 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500 appearance-none"
             >
               <option value="">All Roles</option>
               <option value="user">User</option>
@@ -143,7 +143,7 @@ export const AdminUsers: React.FC = () => {
       </div>
 
       {/* Users Table */}
-      <div className="bg-gray-900 rounded-lg overflow-hidden">
+      <div className="bg-black rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-800">

@@ -90,32 +90,32 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
   if (!isOpen || !user) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gray rounded-2xl w-full max-w-md p-8 relative">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-lg flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="card-dark rounded-2xl w-full max-w-md p-8 relative animate-scale-in hover-glow">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-90"
         >
           <X className="w-6 h-6" />
         </button>
 
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 animate-fade-in">
           <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <User className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-white">Profile Settings</h2>
+          <h2 className="text-2xl font-bold text-gradient">Profile Settings</h2>
           <p className="text-gray-400">Manage your account information</p>
         </div>
 
         {isEditing ? (
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in animate-delay-200">
             {error && (
-              <div className="bg-red-600/20 border border-red-600 text-red-400 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-600/20 border border-red-600 text-red-400 px-4 py-3 rounded-lg text-sm animate-scale-in">
                 {error}
               </div>
             )}
             {success && (
-              <div className="bg-green-600/20 border border-green-600 text-green-400 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-green-600/20 border border-green-600 text-green-400 px-4 py-3 rounded-lg text-sm animate-scale-in">
                 {success}
               </div>
             )}
@@ -130,7 +130,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 value={formData.username}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                className="w-full input-dark px-4 py-3"
               />
             </div>
 
@@ -144,7 +144,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 value={formData.fullName}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                className="w-full input-dark px-4 py-3"
               />
             </div>
 
@@ -158,7 +158,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                className="w-full input-dark px-4 py-3"
               />
             </div>
 
@@ -171,7 +171,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                className="w-full input-dark px-4 py-3"
                 autoComplete="new-password"
                 placeholder="New password"
               />
@@ -189,7 +189,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
                 required
                 min="13"
                 max="120"
-                className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                className="w-full input-dark px-4 py-3"
               />
             </div>
 
@@ -197,59 +197,59 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="px-6 py-3 text-gray-300 hover:text-white transition-colors"
+                className="btn-secondary"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="bg-red-600 hover:bg-red-700 disabled:bg-red-600/50 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                className="btn-primary disabled:opacity-50 disabled:transform-none"
               >
                 {isLoading ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </form>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fade-in animate-delay-200">
             <div className="space-y-4">
-              <div className="flex items-center space-x-3 p-4 bg-gray-800 rounded-lg">
+              <div className="flex items-center space-x-3 p-4 glass-effect rounded-lg transition-all duration-300 hover:bg-gray-800/50">
                 <User className="w-5 h-5 text-gray-400" />
                 <div>
                   <p className="text-gray-400 text-sm">Username</p>
-                  <p className="text-white font-medium">{user.username}</p>
+                  <p className="text-gradient font-medium">{user.username}</p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3 p-4 bg-gray-800 rounded-lg">
+              <div className="flex items-center space-x-3 p-4 glass-effect rounded-lg transition-all duration-300 hover:bg-gray-800/50">
                 <User className="w-5 h-5 text-gray-400" />
                 <div>
                   <p className="text-gray-400 text-sm">Full Name</p>
-                  <p className="text-white font-medium">{user.fullName}</p>
+                  <p className="text-gradient font-medium">{user.fullName}</p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3 p-4 bg-gray-800 rounded-lg">
+              <div className="flex items-center space-x-3 p-4 glass-effect rounded-lg transition-all duration-300 hover:bg-gray-800/50">
                 <Mail className="w-5 h-5 text-gray-400" />
                 <div>
                   <p className="text-gray-400 text-sm">Email</p>
-                  <p className="text-white font-medium">{user.email}</p>
+                  <p className="text-gradient font-medium">{user.email}</p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3 p-4 bg-gray-800 rounded-lg">
+              <div className="flex items-center space-x-3 p-4 glass-effect rounded-lg transition-all duration-300 hover:bg-gray-800/50">
                 <Calendar className="w-5 h-5 text-gray-400" />
                 <div>
                   <p className="text-gray-400 text-sm">Age</p>
-                  <p className="text-white font-medium">{user.age} years old</p>
+                  <p className="text-gradient font-medium">{user.age} years old</p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3 p-4 bg-gray-800 rounded-lg">
+              <div className="flex items-center space-x-3 p-4 glass-effect rounded-lg transition-all duration-300 hover:bg-gray-800/50">
                 <Calendar className="w-5 h-5 text-gray-400" />
                 <div>
                   <p className="text-gray-400 text-sm">Member Since</p>
-                  <p className="text-white font-medium">
+                  <p className="text-gradient font-medium">
                     {new Date(user.createdAt).toLocaleDateString()}
                   </p>
                 </div>
@@ -258,7 +258,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
 
             <button
               onClick={() => setIsEditing(true)}
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-medium flex items-center justify-center space-x-2 transition-colors"
+              className="w-full btn-primary py-3 flex items-center justify-center space-x-2"
             >
               <Edit2 className="w-4 h-4" />
               <span>Edit Profile</span>

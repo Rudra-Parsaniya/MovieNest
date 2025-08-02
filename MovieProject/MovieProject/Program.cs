@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using MovieProject.Middlewares;
 using MovieProject.Models;
+using FluentValidation.AspNetCore;
+using MovieProject.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,11 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    })
+    .AddFluentValidation(fv => 
+    {
+        fv.RegisterValidatorsFromAssemblyContaining<MovieCreateDtoValidator>();
+        fv.DisableDataAnnotationsValidation = true;
     });
 
 builder.Services.AddCors(options =>
@@ -17,9 +24,15 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         builder =>
         {
-            builder.WithOrigins("http://localhost:5173") // Your React app's origin
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
+            builder.SetIsOriginAllowed(origin => 
+                origin.StartsWith("http://localhost:") || 
+                origin.StartsWith("https://localhost:") ||
+                origin.StartsWith("http://127.0.0.1:") ||
+                origin.StartsWith("https://127.0.0.1:")
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
         });
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -29,7 +42,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MovieDbContext>(item => item.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//add fluent validation
+// FluentValidation is now configured above
  
 var app = builder.Build();
 

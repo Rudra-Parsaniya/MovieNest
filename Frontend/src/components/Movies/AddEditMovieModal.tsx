@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Movie } from '../../types/movie';
+import { MultiSelect } from './MultiSelect';
 
 interface AddEditMovieModalProps {
   isOpen: boolean;
@@ -24,6 +25,7 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
     description: '',
     duration: 0,
   });
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -38,6 +40,8 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
         description: movie.description,
         duration: movie.duration,
       });
+      // Parse comma-separated genres into array
+      setSelectedGenres(movie.movieGenre ? movie.movieGenre.split(',').map(g => g.trim()) : []);
     } else {
       setFormData({
         movieTitle: '',
@@ -48,6 +52,7 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
         description: '',
         duration: 0,
       });
+      setSelectedGenres([]);
     }
     setError('');
   }, [movie, isOpen]);
@@ -58,7 +63,11 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
     setError('');
 
     try {
-      await onSave(formData);
+      const movieDataWithGenres = {
+        ...formData,
+        movieGenre: selectedGenres.join(', ')
+      };
+      await onSave(movieDataWithGenres);
       onClose();
     } catch (err) {
       setError('Failed to save movie. Please try again.');
@@ -126,20 +135,15 @@ export const AddEditMovieModal: React.FC<AddEditMovieModalProps> = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Genre *
+                  Genres *
                 </label>
-                <select
-                  name="movieGenre"
-                  value={formData.movieGenre}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full bg-gray-900 text-white px-4 py-3 rounded-lg border border-gray-800 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
-                >
-                  <option value="">Select a genre</option>
-                  {genres.map(genre => (
-                    <option key={genre} value={genre}>{genre}</option>
-                  ))}
-                </select>
+                <MultiSelect
+                  options={genres}
+                  value={selectedGenres}
+                  onChange={setSelectedGenres}
+                  placeholder="Select genres..."
+                  className="w-full"
+                />
               </div>
 
               <div>

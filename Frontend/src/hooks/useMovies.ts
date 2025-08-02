@@ -48,7 +48,7 @@ export const useMovies = () => {
     loadData();
   }, []);
 
-  const searchMovies = async (title?: string, genre?: string, year?: number) => {
+  const searchMovies = async (title?: string, genre?: string | string[], year?: number) => {
     try {
       const data = await apiService.searchMovies(title, genre, year);
       return data;

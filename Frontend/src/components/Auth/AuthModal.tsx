@@ -72,28 +72,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-900 rounded-2xl w-full max-w-md p-8 relative">
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-lg flex items-center justify-center z-50 p-4 animate-fade-in">
+      <div className="card-dark rounded-2xl w-full max-w-md p-8 relative animate-scale-in hover-glow">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-all duration-300 transform hover:scale-110 hover:rotate-90"
         >
           <X className="w-6 h-6" />
         </button>
 
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 animate-fade-in">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <Film className="w-8 h-8 text-red-600" />
-            <h2 className="text-2xl font-bold text-white">MovieDB</h2>
+            <Film className="w-8 h-8 text-red-600 animate-pulse-subtle" />
+            <h2 className="text-2xl font-bold text-gradient">MovieNest</h2>
           </div>
           <p className="text-gray-400">
             {isLogin ? 'Welcome back!' : 'Join MovieDB today'}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in animate-delay-200">
           {error && (
-            <div className="bg-red-600/20 border border-red-600 text-red-400 px-4 py-3 rounded-lg text-sm">
+            <div className="bg-red-600/20 border border-red-600 text-red-400 px-4 py-3 rounded-lg text-sm animate-scale-in">
               {error}
             </div>
           )}
@@ -108,7 +108,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               value={formData.username}
               onChange={handleInputChange}
               required
-              className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+              className="w-full input-dark px-4 py-3"
               placeholder="Enter your username"
             />
           </div>
@@ -124,13 +124,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-                className="w-full bg-gray-800 text-white px-4 py-3 pr-12 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                className="w-full input-dark px-4 py-3 pr-12"
                 placeholder="Enter your password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-all duration-300 hover:scale-110"
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
@@ -148,7 +148,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleInputChange}
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                  className="w-full input-dark px-4 py-3"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -162,7 +162,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                  className="w-full input-dark px-4 py-3"
                   placeholder="Enter your email"
                 />
               </div>
@@ -178,7 +178,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   onChange={handleInputChange}
                   min="13"
                   max="120"
-                  className="w-full bg-gray-800 text-white px-4 py-3 rounded-lg border border-gray-700 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+                  className="w-full input-dark px-4 py-3"
                   placeholder="Enter your age"
                 />
               </div>
@@ -188,10 +188,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   Account Type
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  <label className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                  <label className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-all duration-300 transform hover:scale-105 ${
                     formData.role === 'user' 
-                      ? 'border-blue-500 bg-blue-500/20' 
-                      : 'border-gray-700 bg-gray-800 hover:border-gray-600'
+                      ? 'border-blue-500 bg-blue-500/20 hover-glow' 
+                      : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
                   }`}>
                     <input
                       type="radio"
@@ -208,10 +208,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     </div>
                   </label>
                   
-                  <label className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                  <label className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-all duration-300 transform hover:scale-105 ${
                     formData.role === 'admin' 
-                      ? 'border-red-500 bg-red-500/20' 
-                      : 'border-gray-700 bg-gray-800 hover:border-gray-600'
+                      ? 'border-red-500 bg-red-500/20 hover-glow' 
+                      : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
                   }`}>
                     <input
                       type="radio"
@@ -235,16 +235,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-600/50 text-white py-3 rounded-lg font-medium transition-colors"
+            className="w-full btn-primary py-3 disabled:opacity-50 disabled:transform-none"
           >
             {isLoading ? 'Please wait...' : isLogin ? 'Sign In' : 'Sign Up'}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center animate-fade-in animate-delay-400">
           <button
             onClick={() => setIsLogin(!isLogin)}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-gray-400 hover:text-white transition-all duration-300 hover:scale-105"
           >
             {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
           </button>

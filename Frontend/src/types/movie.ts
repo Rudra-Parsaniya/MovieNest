@@ -1,7 +1,7 @@
 export interface Movie {
   movieId: number;
   movieTitle: string;
-  movieGenre: string;
+  movieGenre: string; // Comma-separated genres
   releaseYear: number;
   imgUrl: string;
   rating: number;
@@ -83,7 +83,7 @@ export interface UpdateUserRequest {
 // Admin-specific types
 export interface AdminMovieData {
   movieTitle: string;
-  movieGenre: string;
+  movieGenre: string; // Comma-separated genres
   releaseYear: number;
   imgUrl: string;
   rating: number;

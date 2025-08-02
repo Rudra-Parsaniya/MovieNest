@@ -94,23 +94,51 @@ export const apiService = {
     getMovieById: (id: number) => request(`MovieAPI/${id}`),
 
     // Movie CRUD + Search (needed by hooks)
-    searchMovies: (title?: string, genre?: string, year?: number) => {
+    searchMovies: (title?: string, genre?: string | string[], year?: number) => {
         const params = new URLSearchParams();
         if (title) params.append('title', title);
-        if (genre) params.append('genre', genre);
+        if (genre) {
+            const genreParam = Array.isArray(genre) ? genre.join(',') : genre;
+            params.append('genre', genreParam);
+        }
         if (year !== undefined) params.append('year', year.toString());
         const query = params.toString();
         const endpoint = query ? `MovieAPI/search?${query}` : 'MovieAPI';
         return request(endpoint);
     },
-    createMovie: (movieData: any) => request('MovieAPI', {
-        method: 'POST',
-        body: JSON.stringify(movieData),
-    }),
-    updateMovie: (id: number, movieData: any) => request(`MovieAPI/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(movieData),
-    }),
+    createMovie: (movieData: any) => {
+        // Transform camelCase to PascalCase for backend
+        const transformedData = {
+            MovieTitle: movieData.movieTitle,
+            MovieGenre: movieData.movieGenre,
+            ReleaseYear: movieData.releaseYear,
+            ImgUrl: movieData.imgUrl,
+            Rating: movieData.rating,
+            Description: movieData.description,
+            Duration: movieData.duration,
+        };
+        return request('MovieAPI', {
+            method: 'POST',
+            body: JSON.stringify(transformedData),
+        });
+    },
+    updateMovie: (id: number, movieData: any) => {
+        // Transform camelCase to PascalCase for backend
+        const transformedData = {
+            MovieId: id,
+            MovieTitle: movieData.movieTitle,
+            MovieGenre: movieData.movieGenre,
+            ReleaseYear: movieData.releaseYear,
+            ImgUrl: movieData.imgUrl,
+            Rating: movieData.rating,
+            Description: movieData.description,
+            Duration: movieData.duration,
+        };
+        return request(`MovieAPI/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(transformedData),
+        });
+    },
     deleteMovie: (id: number) => request(`MovieAPI/${id}`, {
         method: 'DELETE',
     }),
@@ -137,6 +165,13 @@ export const apiService = {
 
     // Recommendations
     getRecommendedMovies: () => request(`RecMovieAPI`),
+    deleteRecommendedMovie: (recId: number) => request(`RecMovieAPI/${recId}`, {
+      method: 'DELETE',
+    }),
+    addRecommendedMovie: (movieId: number) => request('RecMovieAPI', {
+      method: 'POST',
+      body: JSON.stringify({ movieId }),
+    }),
 
     // Admin-specific endpoints
     getAllUsers: () => request('UserAPI'),

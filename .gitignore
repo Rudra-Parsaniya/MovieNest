@@ -33,3 +33,4 @@ Thumbs.db
 # Ignore database files
 *.mdf
 *.ldf 
+.env

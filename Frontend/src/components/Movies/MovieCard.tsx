@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, Plus, Check, Trash2 } from 'lucide-react';
+import { Star, Plus, Check, Trash2, Edit } from 'lucide-react';
 import { Movie } from '../../types/movie';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -14,6 +14,8 @@ interface MovieCardProps {
   onClick?: (movie: Movie) => void;
   showActions?: boolean;
   onDelete?: (movieId: number) => void;
+  onAddRecommended?: (movieId: number) => void;
+  isRecommended?: boolean;
 }
 
 export const MovieCard: React.FC<MovieCardProps> = ({
@@ -27,7 +29,10 @@ export const MovieCard: React.FC<MovieCardProps> = ({
   onClick,
   showActions = true,
   onDelete,
+  onAddRecommended,
+  isRecommended = false,
 }) => {
+  const { user } = useAuth();
   const [addedToWatchlist, setAddedToWatchlist] = useState(false);
   const [addedToFavorites, setAddedToFavorites] = useState(false);
 
@@ -63,7 +68,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
   return (
     <div
-      className="group relative bg-black border border-gray-800 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer hover:drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]"
+      className="group relative card-red bg-black rounded-2xl overflow-hidden shadow-xl cursor-pointer transition-all duration-500 transform hover:scale-110 hover-glow animate-scale-in"
       onClick={() => onClick?.(movie)}
     >
       {/* Movie Poster */}
@@ -71,36 +76,69 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         <img
           src={movie.imgUrl || 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg'}
           alt={movie.movieTitle}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-125"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = 'https://images.pexels.com/photos/7991579/pexels-photo-7991579.jpeg';
           }}
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-gray-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-        {/* Delete Button (Favorites section only) */}
-        {onDelete && (
-          <button
-            onClick={e => {
-              e.stopPropagation();
-              onDelete(movie.movieId);
-            }}
-            className="absolute top-2 right-2 flex items-center justify-center w-9 h-9 rounded-full bg-red-600 hover:bg-red-700 text-white shadow z-20 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-            title="Remove from Favorites"
-          >
-            <Trash2 className="w-5 h-5" />
-          </button>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none" />
+        
+        {/* Admin Action Buttons - Horizontal line on bottom right */}
+        {!showActions && (
+          <div className="absolute bottom-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-500 z-20">
+            {/* Add to Recommended Button */}
+            {user?.role === 'admin' && !isRecommended && onAddRecommended && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  onAddRecommended(movie.movieId);
+                }}
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white shadow-lg backdrop-blur-md border border-white/20 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/30"
+                title="Add to Recommended"
+              >
+                <Star className="w-5 h-5" />
+              </button>
+            )}
+            {/* Edit Button */}
+            {onClick && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  onClick(movie);
+                }}
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white shadow-lg backdrop-blur-md border border-white/20 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/30"
+                title="Edit Movie"
+              >
+                <Edit className="w-5 h-5" />
+              </button>
+            )}
+            {/* Delete Button */}
+            {onDelete && (
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  onDelete(movie.movieId);
+                }}
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white shadow-lg backdrop-blur-md border border-white/20 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/30"
+                title="Delete Movie"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            )}
+          </div>
         )}
-        {/* New Action Buttons - icons only */}
+        
+        {/* Regular Action Buttons - icons only (for non-admin sections) */}
         {showActions && (
-          <div className="absolute top-2 right-2 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+          <div className="absolute top-2 right-2 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-all duration-500 z-20">
             <button
               onClick={handleWatchlistClick}
-              className={`flex items-center justify-center w-9 h-9 rounded-full shadow transition-colors focus:outline-none ${
+              className={`flex items-center justify-center w-10 h-10 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none ${
                 isInWatchlist 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-800 hover:bg-blue-600 text-white focus:ring-2 focus:ring-blue-400'
+                  ? 'bg-blue-600 text-white hover-glow' 
+                  : 'bg-gray-800/80 hover:bg-blue-600 text-white focus:ring-2 focus:ring-blue-400'
               }`}
               title={isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
               disabled={addedToWatchlist}
@@ -109,10 +147,10 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             </button>
             <button
               onClick={handleFavoritesClick}
-              className={`flex items-center justify-center w-9 h-9 rounded-full shadow transition-colors focus:outline-none ${
+              className={`flex items-center justify-center w-10 h-10 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none ${
                 isInFavorites 
-                  ? 'bg-yellow-600 text-white' 
-                  : 'bg-gray-800 hover:bg-yellow-600 text-white focus:ring-2 focus:ring-yellow-400'
+                  ? 'bg-red-600 text-white hover-glow' 
+                  : 'bg-gray-800/80 hover:bg-red-600 text-white focus:ring-2 focus:ring-red-400'
               }`}
               title={isInFavorites ? 'Remove from Favorites' : 'Add to Favorites'}
               disabled={addedToFavorites}
@@ -121,15 +159,16 @@ export const MovieCard: React.FC<MovieCardProps> = ({
             </button>
           </div>
         )}
+        
         {/* Rating Badge */}
-        <div className="absolute top-2 left-2 bg-white/20 backdrop-blur-md rounded-lg px-2 py-1 flex items-center space-x-1 z-10 shadow-md border border-white/30">
+        <div className="absolute top-2 left-2 glass-effect rounded-lg px-3 py-1 flex items-center space-x-1 z-10 shadow-lg">
           <Star className="w-3 h-3 text-yellow-300 fill-current" />
-          <span className="text-white text-xs font-medium">{movie.rating}</span>
+          <span className="text-white text-sm font-bold">{movie.rating}</span>
         </div>
       </div>
       {/* Movie Info */}
-      <div className="p-4 bg-black/10">
-        <h3 className="text-white font-semibold text-lg mb-2 line-clamp-2 group-hover:text-red-400 transition-colors">
+      <div className="p-5 bg-gradient-to-t from-black to-black">
+        <h3 className="text-white font-bold text-lg mb-3 line-clamp-2 group-hover:text-red-400 transition-all duration-300">
           {movie.movieTitle}
         </h3>
         <div className="flex items-center justify-between text-gray-400 text-sm mb-2">
@@ -141,11 +180,11 @@ export const MovieCard: React.FC<MovieCardProps> = ({
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <span className="bg-gray-800/60 backdrop-blur-md text-gray-200 px-2 py-1 rounded text-xs font-semibold shadow border border-white/10">
+          <span className="glass-effect text-gray-200 px-3 py-1 rounded-lg text-xs font-bold shadow-lg">
             {movie.movieGenre}
           </span>
         </div>
-        <p className="text-gray-400 text-sm mt-2 line-clamp-2">
+        <p className="text-gray-400 text-sm mt-3 line-clamp-2 group-hover:text-gray-300 transition-colors duration-300">
           {movie.description}
         </p>
       </div>

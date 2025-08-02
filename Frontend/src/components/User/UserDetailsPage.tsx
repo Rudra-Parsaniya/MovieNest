@@ -21,22 +21,34 @@ const UserDetailsPage: React.FC = () => {
   }
 
   return (
-    <div className="h-screen flex items-center justify-center overflow-hidden relative">
+    <div className="h-screen flex items-center justify-center overflow-hidden relative animate-fade-in">
       <img
         src="/own1.jpg"
         alt="Background"
-        className="absolute inset-0 w-full h-full object-cover z-0"
+        className="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 hover:scale-105"
       />
-      <div className="absolute inset-0 bg-black/40 z-10" />
-      <div className="max-w-lg w-full mx-auto bg-white/5 backdrop-blur-md p-6  rounded-xl border border-white/20 text-slate-100 space-y-4 shadow-xl relative z-20 transform -translate-y-20">
-        <h2 className="text-2xl font-bold mb-4">User Details</h2>
-        <div className="space-y-2">
-          <p><span className="text-gray-400">Username:</span> {user.username}</p>
-          <p><span className="text-gray-400">Full Name:</span> {user.fullName}</p>
+      <div className="absolute inset-0 bg-black/60 z-10" />
+      <div className="max-w-lg w-full mx-auto glass-effect p-8 rounded-2xl text-slate-100 space-y-6 shadow-2xl relative z-20 transform -translate-y-20 animate-scale-in hover-glow">
+        <h2 className="text-3xl font-bold mb-6 text-gradient text-center">User Details</h2>
+        <div className="space-y-4">
+          <div className="flex justify-between items-center p-3 bg-black/20 rounded-lg">
+            <span className="text-gray-400">Username:</span>
+            <span className="text-white font-semibold">{user.username}</span>
+          </div>
+          <div className="flex justify-between items-center p-3 bg-black/20 rounded-lg">
+            <span className="text-gray-400">Full Name:</span>
+            <span className="text-white font-semibold">{user.fullName}</span>
+          </div>
           {user.age !== undefined && (
-            <p><span className="text-gray-400">Age:</span> {user.age}</p>
+            <div className="flex justify-between items-center p-3 bg-black/20 rounded-lg">
+              <span className="text-gray-400">Age:</span>
+              <span className="text-white font-semibold">{user.age}</span>
+            </div>
           )}
-          <p><span className="text-gray-400">Email:</span> {user.email}</p>
+          <div className="flex justify-between items-center p-3 bg-black/20 rounded-lg">
+            <span className="text-gray-400">Email:</span>
+            <span className="text-white font-semibold">{user.email}</span>
+          </div>
         </div>
       </div>
     </div>
