@@ -18,7 +18,7 @@ interface MovieGridProps {
   showActions?: boolean;
 }
 
-export const MovieGrid: React.FC<MovieGridProps> = ({
+const MovieGrid: React.FC<MovieGridProps> = ({
   movies,
   title,
   onAddToWatchlist,
@@ -92,4 +92,5 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
       </div>
     </div>
   );
-};
+
+export { MovieGrid };
