@@ -16,8 +16,6 @@ interface MovieGridProps {
   onDeleteMovie?: (movieId: number) => void;
   isLoading?: boolean;
   showActions?: boolean;
-  onAddRecommended?: (movieId: number) => void;
-  recommendedMovieIds?: number[];
 }
 
 export const MovieGrid: React.FC<MovieGridProps> = ({
@@ -34,20 +32,18 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
   onDeleteMovie,
   isLoading = false,
   showActions = true,
-  onAddRecommended,
-  recommendedMovieIds = [],
 }) => {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        {title && <h2 className="text-3xl font-bold text-gradient animate-fade-in">{title}</h2>}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 card-dark p-6 rounded-2xl">
+        {title && <h2 className="text-2xl font-bold text-white">{title}</h2>}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 bg-gray-900/80 p-4 rounded-2xl shadow-xl">
           {Array.from({ length: 12 }).map((_, index) => (
-            <div key={index} className="animate-pulse animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
-              <div className="shimmer aspect-[2/3] rounded-xl mb-4"></div>
+            <div key={index} className="animate-pulse">
+              <div className="bg-gray-800 aspect-[2/3] rounded-xl mb-4"></div>
               <div className="space-y-2">
-                <div className="h-4 shimmer rounded w-3/4"></div>
-                <div className="h-3 shimmer rounded w-1/2"></div>
+                <div className="h-4 bg-gray-800 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-800 rounded w-1/2"></div>
               </div>
             </div>
           ))}
@@ -58,7 +54,7 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
 
   if (movies.length === 0) {
     return (
-      <div className="text-center py-16 card-dark rounded-2xl animate-fade-in">
+      <div className="text-center py-12 bg-gray-900/80 rounded-2xl shadow-lg">
         <div className="text-gray-400 text-lg">No movies found</div>
         {title && title.toLowerCase().includes('recommend') && (
           <p className="text-gray-500 mt-2">
@@ -75,10 +71,10 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      {title && <h2 className="text-3xl font-bold text-gradient animate-slide-in-left">{title}</h2>}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8 container-dark p-6 rounded-2xl">
-        {movies.map((movie, index) => (
+    <div className="space-y-6">
+      {title && <h2 className="text-2xl font-bold text-white">{title}</h2>}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 bg-black p-4 rounded-2xl shadow-xl">
+        {movies.map((movie) => (
           <MovieCard
             key={movie.movieId}
             movie={movie}
@@ -91,9 +87,6 @@ export const MovieGrid: React.FC<MovieGridProps> = ({
             onClick={onMovieClick}
             onDelete={onDeleteMovie}
             showActions={showActions}
-            onAddRecommended={onAddRecommended}
-            isRecommended={recommendedMovieIds.includes(movie.movieId)}
-            style={{ animationDelay: `${index * 0.05}s` }}
           />
         ))}
       </div>
