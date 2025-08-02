@@ -133,11 +133,11 @@ function AppContent() {
   // Place these handlers above renderContent so they are in scope
   const handleRemoveFromFavorites = async (movieId: number) => {
     await removeFromFavorites(movieId);
-    refetch();
+    // No need to refetch here as removeFromFavorites already updates the state
   };
   const handleRemoveFromWatchlist = async (movieId: number) => {
     await removeFromWatchlist(movieId);
-    refetch();
+    // No need to refetch here as removeFromWatchlist already updates the state
   };
 
   const getRecommendedMoviesData = (): Movie[] => {

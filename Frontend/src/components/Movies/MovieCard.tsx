@@ -82,9 +82,9 @@ export const MovieCard: React.FC<MovieCardProps> = ({
         {/* Delete Button (Favorites section only) */}
         {onDelete && (
           <button
-            onClick={e => {
+            onClick={async e => {
               e.stopPropagation();
-              onDelete(movie.movieId);
+              await onDelete(movie.movieId);
             }}
             className="absolute top-2 right-2 flex items-center justify-center w-9 h-9 rounded-full bg-red-600 hover:bg-red-700 text-white shadow z-20 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
             title="Remove from Favorites"
