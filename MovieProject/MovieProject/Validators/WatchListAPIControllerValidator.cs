@@ -19,7 +19,7 @@ namespace MovieProject.Validators
     {
         public WatchListUpdateDtoValidator()
         {
-            RuleFor(x => x.WatchListId)
+            RuleFor(x => x.WatchlistId)
                 .GreaterThan(0).WithMessage("WatchList ID must be greater than 0");
 
             RuleFor(x => x.UserId)

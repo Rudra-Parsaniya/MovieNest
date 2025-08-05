@@ -25,6 +25,10 @@ public partial class MovieDbContext : DbContext
 
     public virtual DbSet<WatchList> WatchLists { get; set; }
 
+    public virtual DbSet<UpcomingMovie> UpcomingMovies { get; set; }
+
+    public virtual DbSet<TrendingMovie> TrendingMovies { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         if (!optionsBuilder.IsConfigured) 
         { 
@@ -120,6 +124,33 @@ public partial class MovieDbContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__WatchList__UserI__5535A963")
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<UpcomingMovie>(entity =>
+        {
+            entity.HasKey(e => e.UpcomingId).HasName("PK__Upcoming__123456789ABCDEF");
+
+            entity.Property(e => e.MovieTitle)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.MovieGenre)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.ImgUrl).HasColumnType("text");
+            entity.Property(e => e.Description).HasColumnType("text");
+            entity.Property(e => e.TrailerUrl).HasColumnType("text");
+            entity.Property(e => e.ReleaseDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<TrendingMovie>(entity =>
+        {
+            entity.HasKey(e => e.TrendingId).HasName("PK__Trending__987654321FEDCBA");
+
+            entity.Property(e => e.TrendingScore).HasColumnType("decimal(5, 2)");
+
+            entity.HasOne(d => d.Movie).WithMany()
+                .HasForeignKey(d => d.MovieId)
+                .HasConstraintName("FK__TrendingM__Movie__12345678");
         });
 
         OnModelCreatingPartial(modelBuilder);

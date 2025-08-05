@@ -152,8 +152,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                     Get recommendations and stay informed about new releases
                   </p>
                 </div>
+                
               </>
             )}
+            
           </div>
         </div>
       </div>

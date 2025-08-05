@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MovieProject.Middlewares;
 using MovieProject.Models;
-using FluentValidation.AspNetCore;
+using FluentValidation;
 using MovieProject.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,12 +12,10 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-    })
-    .AddFluentValidation(fv => 
-    {
-        fv.RegisterValidatorsFromAssemblyContaining<MovieCreateDtoValidator>();
-        fv.DisableDataAnnotationsValidation = true;
     });
+
+// Add FluentValidation
+builder.Services.AddValidatorsFromAssemblyContaining<MovieCreateDtoValidator>();
 
 builder.Services.AddCors(options =>
 {

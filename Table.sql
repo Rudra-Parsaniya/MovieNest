@@ -1,4 +1,4 @@
-create database MovieDB
+﻿create database MovieDB
 
 CREATE TABLE Movies (
     MovieId INT PRIMARY KEY IDENTITY(1,1),
@@ -47,6 +47,24 @@ CREATE TABLE Favorites (
     FOREIGN KEY (MovieId) REFERENCES movies(MovieId)
 );
 
+CREATE TABLE UpcomingMovies (
+    UpcomingId INT PRIMARY KEY IDENTITY(1,1),
+    MovieTitle VARCHAR(255) NOT NULL,
+    MovieGenre VARCHAR(100),
+    ReleaseYear INT,
+    ImgUrl TEXT,
+    Description TEXT,
+    Duration INT CHECK (Duration > 0),
+    ReleaseDate DATE NOT NULL,
+    TrailerUrl TEXT
+);
+
+CREATE TABLE TrendingMovies (
+    TrendingId INT PRIMARY KEY IDENTITY(1,1),
+    MovieId INT UNIQUE,
+    TrendingScore DECIMAL(5,2) CHECK (TrendingScore >= 0),
+    FOREIGN KEY (MovieId) REFERENCES Movies(MovieId)
+);
 
 
 INSERT INTO RecMovies (MovieId) VALUES (1);
@@ -111,3 +129,112 @@ INNER JOIN
     ON r.MovieId = m.MovieId
 ORDER BY 
     r.RecId;
+
+
+INSERT INTO UpcomingMovies (MovieTitle, MovieGenre, ReleaseYear, ImgUrl, Description, Duration, ReleaseDate, TrailerUrl)
+VALUES 
+(
+  'Avatar 3',
+  'Sci-Fi',
+  2025,
+  'https://images.hdqwalls.com/wallpapers/avatar-fire-and-ash-4k-poster-a4.jpg',
+  'The next chapter in James Cameron’s Avatar saga, continuing the journey of the Navi on Pandora.',
+  180,
+  '2025-12-19',
+  'https://youtu.be/nb_fFj_0rq8?si=Y3k1HIt5uP16vpmN'
+),
+(
+  'The Conjuring: Last Rites',
+  'Horror',
+  2025,
+  'https://ntvb.tmsimg.com/assets/p27846446_v_h10_aa.jpg?w=960&h=540',
+  'The Warrens return for their final battle against evil in the chilling conclusion to The Conjuring saga.',
+  115,
+  '2025-09-19',
+  'https://youtu.be/bMgfsdYoEEo?si=YAw1Aqdxah7BIGBm'
+),
+(
+  'Zootopia 2',
+  'Animation, Comedy',
+  2025,
+  'https://i.ytimg.com/vi/xo4rkcC7kFc/maxresdefault.jpg',
+  'Returning duo Judy Hopps and Nick Wilde are now official police partners and enter partner counseling with Dr. Fuzzby while tracking down a new threat—Gary De\'Snake—in the vibrant and expanding world of Zootopia.',
+  110,
+  '2025-11-26',
+  'https://youtu.be/BjkIOU5PhyQ?si=EVL1jfo7s3kyVSWM'
+),
+(
+  'Project Hail Mary',
+  'Adventure, Sci‑Fi',
+  2026,
+  'https://ticketdirect.co.nz/wp-content/uploads/2025/06/project-hail-mary-poster-cropped-banner.jpg',
+  'Ryan Gosling stars as Ryland Grace, a middle‑school science teacher turned reluctant astronaut who wakes from a coma aboard a ship 11.9 light‑years from Earth with no memory, tasked to save humanity by investigating a dying sun and forming an unlikely friendship with an alien.',
+  135,
+  '2026-03-20',
+  'https://youtu.be/OUwp1F5babE?si=49Tw1dUGq-a_1e36'
+),
+(
+   'Tron: Ares',
+  'Sci-Fi, Action',
+  2025,
+  'https://4kwallpapers.com/images/wallpapers/tron-ares-poster-3840x2160-22060.jpg',
+  'When the AI program Ares (Jared Leto) crosses over from the digital Grid into the real world, humanity faces its first contact with sentient AI. Packed with lightcycle chases, digital assassins, and Jeff Bridges reprising Kevin Flynn, it blends cyberpunk thrills with high‑stakes spectacle.',
+  150,
+  '2025-10-10',
+  'https://youtu.be/YShVEXb7-ic?si=LpfjQjOgmWcIU2Zy'
+)
+
+INSERT INTO UpcomingMovies (
+  MovieTitle, MovieGenre, ReleaseYear, ImgUrl, Description, Duration, ReleaseDate, TrailerUrl
+)
+VALUES 
+(
+  'Avatar 3',
+  'Sci-Fi',
+  2025,
+  'https://images.hdqwalls.com/wallpapers/avatar-fire-and-ash-4k-poster-a4.jpg',
+  'The next chapter in James Cameron''s Avatar saga, continuing the journey of the Navi on Pandora.',
+  180,
+  '2025-12-19',
+  'https://youtu.be/nb_fFj_0rq8?si=Y3k1HIt5uP16vpmN'
+),
+(
+  'The Conjuring: Last Rites',
+  'Horror',
+  2025,
+  'https://ntvb.tmsimg.com/assets/p27846446_v_h10_aa.jpg?w=960&h=540',
+  'The Warrens return for their final battle against evil in the chilling conclusion to The Conjuring saga.',
+  115,
+  '2025-09-19',
+  'https://youtu.be/bMgfsdYoEEo?si=YAw1Aqdxah7BIGBm'
+),
+(
+  'Zootopia 2',
+  'Animation, Comedy',
+  2025,
+  'https://i.ytimg.com/vi/xo4rkcC7kFc/maxresdefault.jpg',
+  'Returning duo Judy Hopps and Nick Wilde are now official police partners and enter partner counseling with Dr. Fuzzby while tracking down a new threat—Gary De''Snake—in the vibrant and expanding world of Zootopia.',
+  110,
+  '2025-11-26',
+  'https://youtu.be/BjkIOU5PhyQ?si=EVL1jfo7s3kyVSWM'
+),
+(
+  'Project Hail Mary',
+  'Adventure, Sci-Fi',
+  2026,
+  'https://ticketdirect.co.nz/wp-content/uploads/2025/06/project-hail-mary-poster-cropped-banner.jpg',
+  'Ryan Gosling stars as Ryland Grace, a middle-school science teacher turned reluctant astronaut who wakes from a coma aboard a ship 11.9 light-years from Earth with no memory, tasked to save humanity by investigating a dying sun and forming an unlikely friendship with an alien.',
+  135,
+  '2026-03-20',
+  'https://youtu.be/OUwp1F5babE?si=49Tw1dUGq-a_1e36'
+),
+(
+  'Tron: Ares',
+  'Sci-Fi, Action',
+  2025,
+  'https://4kwallpapers.com/images/wallpapers/tron-ares-poster-3840x2160-22060.jpg',
+  'When the AI program Ares (Jared Leto) crosses over from the digital Grid into the real world, humanity faces its first contact with sentient AI. Packed with light-cycle chases, digital assassins, and Jeff Bridges reprising Kevin Flynn, it blends cyberpunk thrills with high-stakes spectacle.',
+  150,
+  '2025-10-10',
+  'https://youtu.be/YShVEXb7-ic?si=LpfjQjOgmWcIU2Zy'
+);

@@ -9,7 +9,8 @@ import {
   LogOut,
   Settings,
   Shield,
-  Users
+  Users,
+  Compass
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -37,6 +38,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (user?.role === 'admin') {
       return [
         { id: 'home', label: 'Home', icon: Home },
+        { id: 'explore', label: 'Explore', icon: Compass },
         { id: 'recommended', label: 'Recommended', icon: TrendingUp },
         { id: 'movies', label: 'Movies', icon: Film },
         { id: 'users', label: 'Users', icon: Users },
@@ -44,6 +46,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     } else {
       return [
         { id: 'home', label: 'Home', icon: Home },
+        { id: 'explore', label: 'Explore', icon: Compass },
         { id: 'recommended', label: 'Recommended', icon: TrendingUp },
         { id: 'favorites', label: 'Favorites', icon: Star, count: favoriteCount },
         { id: 'watchlist', label: 'Watchlist', icon: Bookmark, count: watchlistCount },

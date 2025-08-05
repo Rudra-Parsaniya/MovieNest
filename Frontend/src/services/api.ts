@@ -173,6 +173,20 @@ export const apiService = {
       body: JSON.stringify({ movieId }),
     }),
 
+    // Upcoming Movies
+    getUpcomingMovies: () => request('UpcomingMoviesAPI'),
+    getUpcomingMoviesByDate: () => request('UpcomingMoviesAPI/upcoming'),
+    getUpcomingMovieById: (id: number) => request(`UpcomingMoviesAPI/${id}`),
+    searchUpcomingMovies: (title?: string, genre?: string, year?: number) => {
+        const params = new URLSearchParams();
+        if (title) params.append('title', title);
+        if (genre) params.append('genre', genre);
+        if (year !== undefined) params.append('year', year.toString());
+        const query = params.toString();
+        const endpoint = query ? `UpcomingMoviesAPI/search?${query}` : 'UpcomingMoviesAPI';
+        return request(endpoint);
+    },
+
     // Admin-specific endpoints
     getAllUsers: () => request('UserAPI'),
     deleteUser: (id: number) => request(`UserAPI/${id}`, {

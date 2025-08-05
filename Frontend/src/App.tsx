@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Layout/Sidebar';
 import { Header } from './components/Layout/Header';
 import { HomePage } from './components/Home/HomePage';
+import { ExplorePage } from './components/Explore/ExplorePage';
 import { MovieGrid } from './components/Movies/MovieGrid';
 import { MovieModal } from './components/Movies/MovieModal';
 import { AddEditMovieModal } from './components/Movies/AddEditMovieModal';
@@ -262,6 +263,14 @@ function AppContent() {
             totalUsers={totalUsers}
             recommendedMoviesCount={recommendedMovies.length}
             totalAdminsCount={totalAdminsCount}
+          />
+        );
+      case 'explore':
+        return (
+          <ExplorePage
+            favoriteCount={favorites.length}
+            watchlistCount={watchlist.length}
+            totalMovies={movies.length}
           />
         );
       case 'recommended':

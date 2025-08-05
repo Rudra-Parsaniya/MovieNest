@@ -60,7 +60,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
   return (
     <div
-      className="group relative bg-black border border-gray-800 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer hover:drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]"
+      className="group relative bg-black border border-gray-800 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer hover:drop-shadow-[0_0_10px_rgba(239,68,68,0.5)] hover:scale-105 focus:outline-none"
       onClick={() => onClick?.(movie)}
     >
       {/* Movie Poster */}
