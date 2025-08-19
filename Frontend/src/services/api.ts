@@ -187,6 +187,23 @@ export const apiService = {
         return request(endpoint);
     },
 
+    // Trending Movies
+    getTrendingMovies: () => request('TrendingMoviesAPI'),
+    getTopTrendingMovies: (count?: number) => {
+        const endpoint = count ? `TrendingMoviesAPI/top?count=${count}` : 'TrendingMoviesAPI/top';
+        return request(endpoint);
+    },
+    getTrendingMovieById: (id: number) => request(`TrendingMoviesAPI/${id}`),
+    searchTrendingMovies: (movieId?: number, minScore?: number, maxScore?: number) => {
+        const params = new URLSearchParams();
+        if (movieId !== undefined) params.append('movieId', movieId.toString());
+        if (minScore !== undefined) params.append('minScore', minScore.toString());
+        if (maxScore !== undefined) params.append('maxScore', maxScore.toString());
+        const query = params.toString();
+        const endpoint = query ? `TrendingMoviesAPI/search?${query}` : 'TrendingMoviesAPI';
+        return request(endpoint);
+    },
+
     // Admin-specific endpoints
     getAllUsers: () => request('UserAPI'),
     deleteUser: (id: number) => request(`UserAPI/${id}`, {

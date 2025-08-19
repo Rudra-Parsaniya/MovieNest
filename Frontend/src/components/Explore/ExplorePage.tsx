@@ -1,6 +1,7 @@
 import React from 'react';
 import { Compass, Calendar, Star, TrendingUp } from 'lucide-react';
 import UpcomingMoviesCarousel from '../Movies/UpcomingMoviesCarousel';
+import TrendingMoviesCarousel from '../Movies/TrendingMoviesCarousel';
 
 interface ExplorePageProps {
   favoriteCount: number;
@@ -29,6 +30,15 @@ export const ExplorePage: React.FC<ExplorePageProps> = ({
             <h2 className="text-3xl font-bold text-gradient">Coming Soon</h2>
           </div>
           <UpcomingMoviesCarousel autoPlay={true} autoPlayInterval={6000} />
+        </div>
+
+        {/* Trending Movies Carousel */}
+        <div className="mb-16 animate-fade-in animate-delay-400">
+          <div className="flex items-center gap-3 mb-8">
+            <TrendingUp className="w-8 h-8 text-yellow-500" />
+            <h2 className="text-3xl font-bold text-gradient">Trending Now</h2>
+          </div>
+          <TrendingMoviesCarousel autoPlay={true} autoPlayInterval={5000} />
         </div>
 
         {/* Stats Section */}

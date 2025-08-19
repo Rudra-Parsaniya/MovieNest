@@ -111,6 +111,12 @@ INSERT INTO RecMovies (MovieId) VALUES (74);
 INSERT INTO RecMovies (MovieId) VALUES (77);
 INSERT INTO RecMovies (MovieId) VALUES (79)
 
+INSERT INTO TrendingMovies (MovieId) VALUES (4);
+INSERT INTO TrendingMovies (MovieId) VALUES (8);
+INSERT INTO TrendingMovies (MovieId) VALUES (20);
+INSERT INTO TrendingMovies (MovieId) VALUES (70);
+INSERT INTO TrendingMovies (MovieId) VALUES (98);
+INSERT INTO TrendingMovies (MovieId) VALUES (166)
 
 
 SELECT 
