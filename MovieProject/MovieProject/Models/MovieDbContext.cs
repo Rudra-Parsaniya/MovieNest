@@ -29,6 +29,8 @@ public partial class MovieDbContext : DbContext
 
     public virtual DbSet<TrendingMovie> TrendingMovies { get; set; }
 
+    public virtual DbSet<Review> Reviews { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         if (!optionsBuilder.IsConfigured) 
         { 
@@ -151,6 +153,23 @@ public partial class MovieDbContext : DbContext
             entity.HasOne(d => d.Movie).WithMany()
                 .HasForeignKey(d => d.MovieId)
                 .HasConstraintName("FK__TrendingM__Movie__12345678");
+        });
+
+        modelBuilder.Entity<Review>(entity =>
+        {
+            entity.HasKey(e => e.ReviewId);
+            entity.Property(e => e.Content).HasMaxLength(2000).IsRequired();
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+    
+            entity.HasOne(d => d.User)
+                .WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(d => d.Movie)
+                .WithMany()
+                .HasForeignKey(d => d.MovieId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -66,6 +66,18 @@ CREATE TABLE TrendingMovies (
     FOREIGN KEY (MovieId) REFERENCES Movies(MovieId)
 );
 
+CREATE TABLE Reviews (
+    ReviewId INT PRIMARY KEY IDENTITY(1,1),
+    UserId INT NOT NULL,
+    MovieId INT NOT NULL,
+    Content NVARCHAR(2000) NOT NULL,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    UpdatedAt DATETIME NULL,
+    IsPinned BIT NOT NULL DEFAULT 0,
+
+    CONSTRAINT FK_Reviews_Users FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE,
+    CONSTRAINT FK_Reviews_Movies FOREIGN KEY (MovieId) REFERENCES Movies(MovieId) ON DELETE CASCADE
+);
 
 INSERT INTO RecMovies (MovieId) VALUES (1);
 INSERT INTO RecMovies (MovieId) VALUES (101);
