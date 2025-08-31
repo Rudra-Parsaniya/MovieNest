@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Star, Clock, Calendar, Heart, Bookmark } from 'lucide-react';
 import { Movie } from '../../types/movie';
+import { MovieReviews } from './MovieReviews';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface MovieModalProps {
@@ -37,7 +38,6 @@ export const MovieModal: React.FC<MovieModalProps> = ({
       onAddToWatchlist(movie.movieId);
     }
   };
-
   const handleFavoritesClick = () => {
     if (isInFavorites && onRemoveFromFavorites) {
       onRemoveFromFavorites(movie.movieId);
@@ -56,7 +56,6 @@ export const MovieModal: React.FC<MovieModalProps> = ({
           >
             <X className="w-6 h-6" />
           </button>
-
           {/* Hero Section */}
           <div className="relative h-96 overflow-hidden rounded-t-2xl">
             <img
@@ -165,8 +164,14 @@ export const MovieModal: React.FC<MovieModalProps> = ({
               </div>
             </div>
           </div>
-        </div>
+        {/* Reviews Section */}
+        {movie && (
+          <div className="px-8 pb-8">
+            <MovieReviews movieId={movie.movieId} />
+          </div>
+        )}
       </div>
     </div>
+  </div>
   );
 };
