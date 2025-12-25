@@ -7,16 +7,21 @@ export const useMovies = () => {
   const [recommendedMovies, setRecommendedMovies] = useState<RecommendedMovie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [totalCount, setTotalCount] = useState(0);
 
-  const fetchMovies = async () => {
+  const fetchMovies = async (pageOverride?: number, pageSizeOverride?: number) => {
     try {
-      const data = await apiService.getMovies();
-      setMovies(data);
+      const data = await apiService.getMovies(pageOverride ?? page, pageSizeOverride ?? pageSize);
+      setMovies(data.movies);
+      setTotalCount(data.totalCount);
     } catch (err: any) {
       console.error('Error fetching movies:', err);
       setError('Failed to load movies. Please check if the backend server is running.');
       // Set empty array to prevent further errors
       setMovies([]);
+      setTotalCount(0);
     }
   };
 
@@ -46,7 +51,7 @@ export const useMovies = () => {
     };
 
     loadData();
-  }, []);
+  }, [page, pageSize]);
 
   const searchMovies = async (title?: string, genre?: string | string[], year?: number) => {
     try {
@@ -99,6 +104,11 @@ export const useMovies = () => {
     recommendedMovies,
     isLoading,
     error,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    totalCount,
     searchMovies,
     createMovie,
     updateMovie,

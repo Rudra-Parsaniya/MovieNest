@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Sidebar } from './components/Layout/Sidebar';
 import { Header } from './components/Layout/Header';
 import { HomePage } from './components/Home/HomePage';
@@ -9,6 +9,7 @@ import { AddEditMovieModal } from './components/Movies/AddEditMovieModal';
 import { AuthModal } from './components/Auth/AuthModal';
 import { ProfileModal } from './components/Profile/ProfileModal';
 import UserDetailsPage from './components/User/UserDetailsPage';
+import { Buddies } from './components/User/Buddies';
 import { AdminMovies } from './components/Admin/AdminMovies';
 import { AdminUsers } from './components/Admin/AdminUsers';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -48,7 +49,8 @@ function AppContent() {
     createMovie, 
     updateMovie, 
     deleteMovie,
-    refetch 
+    refetch,
+    totalCount
   } = useMovies();
   
 
@@ -81,6 +83,7 @@ function AppContent() {
 
     fetchUserCounts();
   }, []);
+  
 
   // User counts are now fetched from the backend API
 
@@ -90,11 +93,10 @@ function AppContent() {
       setSearchResults([]);
       return;
     }
-
     setIsSearching(true);
     try {
       const results = await searchMovies(query);
-      setSearchResults(results);
+      setSearchResults(Array.isArray(results) ? results : results.movies || []);
     } catch (error) {
       console.error('Search failed:', error);
       setSearchResults([]);
@@ -107,11 +109,10 @@ function AppContent() {
       setSearchResults([]);
       return;
     }
-
     setIsSearching(true);
     try {
       const results = await searchMovies(title, genre, year);
-      setSearchResults(results);
+      setSearchResults(Array.isArray(results) ? results : results.movies || []);
     } catch (error) {
       console.error('Advanced search failed:', error);
       setSearchResults([]);
@@ -208,8 +209,14 @@ function AppContent() {
   };
 
   const getWatchlistMovies = (): Movie[] => {
+    const allMovies = [
+      ...movies,
+      ...getRecommendedMoviesData().filter(
+        recMovie => !movies.some(m => m.movieId === recMovie.movieId)
+      ),
+    ];
     return watchlist
-      .map(item => movies.find(movie => movie.movieId === item.movieId))
+      .map(item => allMovies.find(movie => movie.movieId === item.movieId))
       .filter((movie): movie is Movie => movie !== undefined);
   };
 
@@ -259,7 +266,7 @@ function AppContent() {
           <HomePage
             favoriteCount={favorites.length}
             watchlistCount={watchlist.length}
-            totalMovies={movies.length}
+            totalMovies={totalCount}
             totalUsers={totalUsers}
             recommendedMoviesCount={recommendedMovies.length}
             totalAdminsCount={totalAdminsCount}
@@ -326,7 +333,9 @@ function AppContent() {
           />
         );
       case 'user':
-        return <UserDetailsPage />; // Update renderContent for user
+        return <UserDetailsPage />;
+      case 'buddies':
+        return <Buddies />;
       case 'movies':
         return user?.role === 'admin' ? <AdminMovies /> : <div>Access Denied</div>;
       case 'users':

@@ -11,11 +11,13 @@ interface MovieGridProps {
   onRemoveFromFavorites?: (movieId: number) => void;
   watchlistMovieIds?: number[];
   favoriteMovieIds?: number[];
+  recommendedMovieIds?: number[];
   onMovieClick?: (movie: Movie) => void;
   onEditMovie?: (movie: Movie) => void;
   onDeleteMovie?: (movieId: number) => void;
   isLoading?: boolean;
   showActions?: boolean;
+  onAddRecommended?: (movieId: number) => void;
 }
 
 export const MovieGrid: React.FC<MovieGridProps> = ({

@@ -15,6 +15,9 @@ export const AdminMovies: React.FC = () => {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [totalCount, setTotalCount] = useState(0);
 
   const genres = [
     'Action', 'Adventure', 'Animation', 'Biography', 'Comedy', 'Crime', 'Documentary',
@@ -24,7 +27,7 @@ export const AdminMovies: React.FC = () => {
 
   useEffect(() => {
     loadMovies();
-  }, []);
+  }, [page, pageSize]);
 
   useEffect(() => {
     filterMovies();
@@ -33,13 +36,14 @@ export const AdminMovies: React.FC = () => {
   const loadMovies = async () => {
     try {
       setIsLoading(true);
-      const data = await apiService.getMovies();
-      setMovies(data);
+      const data = await apiService.getMovies(page, pageSize);
+      setMovies(data.movies);
+      setTotalCount(data.totalCount);
     } catch (err: any) {
       console.error('Failed to load movies:', err);
       setError(err.message || 'Failed to load movies');
-      // For now, set empty array to prevent further errors
       setMovies([]);
+      setTotalCount(0);
     } finally {
       setIsLoading(false);
     }
@@ -101,12 +105,13 @@ export const AdminMovies: React.FC = () => {
   const handleAddToRecommended = async (movieId: number) => {
     try {
       await apiService.addRecommendedMovie(movieId);
-      // Show success message or update UI as needed
       alert('Movie added to recommended section successfully!');
     } catch (err: any) {
       setError(err.message || 'Failed to add movie to recommended section');
     }
   };
+
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   if (isLoading) {
     return (
@@ -185,11 +190,32 @@ export const AdminMovies: React.FC = () => {
         ))}
       </div>
 
-      {filteredMovies.length === 0 && !isLoading && (
-        <div className="text-center py-12">
-          <div className="text-gray-400 text-lg">
-            {searchQuery || selectedGenres.length > 0 ? 'No movies found matching your criteria' : 'No movies available'}
-          </div>
+      {/* Pagination Controls (Admin Only) */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-8 gap-2">
+          <button
+            className="px-3 py-1 rounded bg-gray-800 text-white disabled:opacity-50"
+            onClick={() => setPage(page - 1)}
+            disabled={page === 1}
+          >
+            Prev
+          </button>
+          {[...Array(totalPages)].map((_, idx) => (
+            <button
+              key={idx + 1}
+              className={`px-3 py-1 rounded ${page === idx + 1 ? 'bg-red-600 text-white' : 'bg-gray-800 text-white'}`}
+              onClick={() => setPage(idx + 1)}
+            >
+              {idx + 1}
+            </button>
+          ))}
+          <button
+            className="px-3 py-1 rounded bg-gray-800 text-white disabled:opacity-50"
+            onClick={() => setPage(page + 1)}
+            disabled={page === totalPages}
+          >
+            Next
+          </button>
         </div>
       )}
 
@@ -207,4 +233,4 @@ export const AdminMovies: React.FC = () => {
       )}
     </div>
   );
-}; 
+};

@@ -16,10 +16,12 @@ namespace MovieProject.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Movie>>> GetMovies()
+        public async Task<ActionResult<List<Movie>>> GetMovies(int page = 1, int pageSize = 20)
         {
-            var data = await context.Movies.ToListAsync();
-            return Ok(data);
+            var query = context.Movies.AsQueryable();
+            var totalCount = await query.CountAsync();
+            var data = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            return Ok(new { movies = data, totalCount });
         }
 
         [HttpGet("{MovieID}")]
@@ -99,7 +101,7 @@ namespace MovieProject.Controllers
 
         // GET: api/MovieAPI/search?title=avengers&genre=Action,Comedy&year=2020
         [HttpGet("search")]
-        public async Task<ActionResult<List<Movie>>> SearchMovies(string? title, string? genre, int? year)
+        public async Task<ActionResult<List<Movie>>> SearchMovies(string? title, string? genre, int? year, int page = 1, int pageSize = 20)
         {
             var query = context.Movies.AsQueryable();
 
@@ -123,8 +125,9 @@ namespace MovieProject.Controllers
             if (year.HasValue)
                 query = query.Where(m => m.ReleaseYear == year.Value);
 
-            var result = await query.ToListAsync();
-            return Ok(result);
+            var totalCount = await query.CountAsync();
+            var result = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            return Ok(new { movies = result, totalCount });
         }
 
         [HttpGet("genres")]

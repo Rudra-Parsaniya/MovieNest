@@ -30,6 +30,7 @@ public partial class MovieDbContext : DbContext
     public virtual DbSet<TrendingMovie> TrendingMovies { get; set; }
 
     public virtual DbSet<Review> Reviews { get; set; }
+        public virtual DbSet<BuddyRequest> BuddyRequests { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         if (!optionsBuilder.IsConfigured) 
@@ -173,6 +174,20 @@ public partial class MovieDbContext : DbContext
         });
 
         OnModelCreatingPartial(modelBuilder);
+            modelBuilder.Entity<BuddyRequest>(entity =>
+            {
+                entity.HasKey(e => e.BuddyRequestId);
+                entity.Property(e => e.RequestedAt).HasColumnType("datetime");
+                entity.Property(e => e.IsAccepted).HasDefaultValue(false);
+                entity.HasOne<User>()
+                    .WithMany()
+                    .HasForeignKey(e => e.FromUserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne<User>()
+                    .WithMany()
+                    .HasForeignKey(e => e.ToUserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

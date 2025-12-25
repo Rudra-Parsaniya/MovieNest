@@ -50,6 +50,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         { id: 'recommended', label: 'Recommended', icon: TrendingUp },
         { id: 'favorites', label: 'Favorites', icon: Star, count: favoriteCount },
         { id: 'watchlist', label: 'Watchlist', icon: Bookmark, count: watchlistCount },
+        { id: 'buddies', label: 'Buddies', icon: Users },
         { id: 'user', label: 'User', icon: User },
       ];
     }

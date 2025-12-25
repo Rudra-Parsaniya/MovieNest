@@ -87,14 +87,14 @@ export const apiService = {
     },
 
     // Movies
-    getMovies: (searchTerm?: string) => {
-        const endpoint = searchTerm ? `MovieAPI/search?title=${searchTerm}` : 'MovieAPI';
+    getMovies: (page: number = 1, pageSize: number = 20) => {
+        const endpoint = `MovieAPI?page=${page}&pageSize=${pageSize}`;
         return request(endpoint);
     },
     getMovieById: (id: number) => request(`MovieAPI/${id}`),
 
     // Movie CRUD + Search (needed by hooks)
-    searchMovies: (title?: string, genre?: string | string[], year?: number) => {
+    searchMovies: (title?: string, genre?: string | string[], year?: number, page: number = 1, pageSize: number = 20) => {
         const params = new URLSearchParams();
         if (title) params.append('title', title);
         if (genre) {
@@ -102,8 +102,10 @@ export const apiService = {
             params.append('genre', genreParam);
         }
         if (year !== undefined) params.append('year', year.toString());
+        params.append('page', page.toString());
+        params.append('pageSize', pageSize.toString());
         const query = params.toString();
-        const endpoint = query ? `MovieAPI/search?${query}` : 'MovieAPI';
+        const endpoint = query ? `MovieAPI/search?${query}` : `MovieAPI?page=${page}&pageSize=${pageSize}`;
         return request(endpoint);
     },
     createMovie: (movieData: any) => {

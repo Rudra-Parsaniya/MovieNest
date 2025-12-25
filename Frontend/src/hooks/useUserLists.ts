@@ -42,55 +42,47 @@ export const useUserLists = () => {
 
   const addToWatchlist = async (movieId: number) => {
     if (!user) return;
-
     try {
-      const newItem = await apiService.addToWatchlist(user.userId, movieId);
-      setWatchlist(prev => [...prev, newItem]);
+      await apiService.addToWatchlist(user.userId, movieId);
+      await fetchUserLists();
     } catch (error) {
       console.error('Error adding to watchlist:', error);
-      // Don't throw error, just log it
     }
   };
 
   const removeFromWatchlist = async (movieId: number) => {
     if (!user) return;
-
     try {
       const item = watchlist.find(w => w.movieId === movieId);
       if (item) {
         await apiService.removeFromWatchlist(item.watchlistId);
-        setWatchlist(prev => prev.filter(w => w.movieId !== movieId));
+        await fetchUserLists();
       }
     } catch (error) {
       console.error('Error removing from watchlist:', error);
-      // Don't throw error, just log it
     }
   };
 
   const addToFavorites = async (movieId: number) => {
     if (!user) return;
-
     try {
-      const newItem = await apiService.addToFavorites(user.userId, movieId);
-      setFavorites(prev => [...prev, newItem]);
+      await apiService.addToFavorites(user.userId, movieId);
+      await fetchUserLists();
     } catch (error) {
       console.error('Error adding to favorites:', error);
-      // Don't throw error, just log it
     }
   };
 
   const removeFromFavorites = async (movieId: number) => {
     if (!user) return;
-
     try {
       const item = favorites.find(f => f.movieId === movieId);
       if (item) {
         await apiService.removeFromFavorites(item.favoriteId);
-        setFavorites(prev => prev.filter(f => f.movieId !== movieId));
+        await fetchUserLists();
       }
     } catch (error) {
       console.error('Error removing from favorites:', error);
-      // Don't throw error, just log it
     }
   };
 

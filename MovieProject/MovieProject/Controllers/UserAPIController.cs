@@ -336,6 +336,73 @@ namespace MovieProject.Controllers
             }
         }
 
+        // Send a buddy request
+        [HttpPost("{fromUserId}/buddy-requests")]
+        public async Task<IActionResult> SendBuddyRequest(int fromUserId, [FromBody] int toUserId)
+        {
+            if (fromUserId == toUserId)
+                return BadRequest("Cannot send request to yourself.");
+            var alreadyRequested = await context.BuddyRequests.AnyAsync(r => r.FromUserId == fromUserId && r.ToUserId == toUserId && !r.IsAccepted);
+            if (alreadyRequested)
+                return BadRequest("Request already sent.");
+            var alreadyFriends = await context.BuddyRequests.AnyAsync(r => r.FromUserId == fromUserId && r.ToUserId == toUserId && r.IsAccepted);
+            if (alreadyFriends)
+                return BadRequest("Already buddies.");
+            var request = new BuddyRequest { FromUserId = fromUserId, ToUserId = toUserId };
+            await context.BuddyRequests.AddAsync(request);
+            await context.SaveChangesAsync();
+            return Ok(request);
+        }
+
+        // View pending buddy requests for a user
+        [HttpGet("{userId}/buddy-requests/pending")]
+        public async Task<IActionResult> GetPendingBuddyRequests(int userId)
+        {
+            var requests = await context.BuddyRequests
+                .Where(r => r.ToUserId == userId && !r.IsAccepted)
+                .ToListAsync();
+            return Ok(requests);
+        }
+
+        // Accept a buddy request
+        [HttpPost("buddy-requests/{requestId}/accept")]
+        public async Task<IActionResult> AcceptBuddyRequest(int requestId)
+        {
+            var request = await context.BuddyRequests.FindAsync(requestId);
+            if (request == null)
+                return NotFound();
+            request.IsAccepted = true;
+            await context.SaveChangesAsync();
+            return Ok(request);
+        }
+
+        // Decline a buddy request
+        [HttpPost("buddy-requests/{requestId}/decline")]
+        public async Task<IActionResult> DeclineBuddyRequest(int requestId)
+        {
+            var request = await context.BuddyRequests.FindAsync(requestId);
+            if (request == null)
+                return NotFound();
+            context.BuddyRequests.Remove(request);
+            await context.SaveChangesAsync();
+            return Ok();
+        }
+
+        // List accepted buddies for a user
+        [HttpGet("{userId}/friends")]
+        public async Task<IActionResult> GetBuddies(int userId)
+        {
+            var buddyIds = await context.BuddyRequests
+                .Where(r => (r.FromUserId == userId || r.ToUserId == userId) && r.IsAccepted)
+                .Select(r => r.FromUserId == userId ? r.ToUserId : r.FromUserId)
+                .ToListAsync();
+            var buddies = await context.Users
+                .Where(u => buddyIds.Contains(u.UserId))
+                .Select(u => new { u.UserId, u.Username, u.FullName })
+                .ToListAsync();
+            return Ok(buddies);
+        }
+
         private bool UserExists(int id)
         {
             return context.Users.Any(e => e.UserId == id);
